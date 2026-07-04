@@ -775,6 +775,18 @@ export type Database = {
         }
         Returns: boolean
       }
+      notify_role: {
+        Args: {
+          _body: string
+          _entity_id: string
+          _link: string
+          _module: string
+          _role: Database["public"]["Enums"]["app_role"]
+          _title: string
+          _type: string
+        }
+        Returns: number
+      }
     }
     Enums: {
       app_role: "super_admin" | "admin" | "accounts_admin" | "worker"
