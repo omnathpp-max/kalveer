@@ -41,6 +41,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
+import { FileUpload, AttachmentViewButton } from "@/components/file-upload";
 import {
   Wallet,
   Plus,
@@ -519,11 +520,12 @@ function NewRequestDialog({
           <Field label="Notes (optional)">
             <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={3} />
           </Field>
-          <Field label="Attachment URL (optional)">
-            <Input
+          <Field label="Bill / Receipt (optional)">
+            <FileUpload
               value={attachmentUrl}
-              onChange={(e) => setAttachmentUrl(e.target.value)}
-              placeholder="Paste link to bill/photo"
+              onChange={setAttachmentUrl}
+              folder="petty-cash"
+              label="bill"
             />
           </Field>
         </div>
@@ -604,16 +606,7 @@ function RequestDetailDialog({
           {request.attachment_url && (
             <InfoRow
               label="Attachment"
-              value={
-                <a
-                  className="text-primary underline"
-                  href={request.attachment_url}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Open
-                </a>
-              }
+              value={<AttachmentViewButton value={request.attachment_url} />}
             />
           )}
           {request.approver_id && (
@@ -635,16 +628,7 @@ function RequestDetailDialog({
           {request.payment_proof_url && (
             <InfoRow
               label="Payment proof"
-              value={
-                <a
-                  className="text-primary underline"
-                  href={request.payment_proof_url}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Open
-                </a>
-              }
+              value={<AttachmentViewButton value={request.payment_proof_url} />}
             />
           )}
         </div>
@@ -721,8 +705,13 @@ function RequestDetailDialog({
                 <Input value={payRef} onChange={(e) => setPayRef(e.target.value)} />
               </Field>
             </div>
-            <Field label="Payment proof URL (optional)">
-              <Input value={payProof} onChange={(e) => setPayProof(e.target.value)} />
+            <Field label="Payment proof (optional)">
+              <FileUpload
+                value={payProof}
+                onChange={setPayProof}
+                folder="petty-cash-proofs"
+                label="proof"
+              />
             </Field>
             <Field label="Notes (optional)">
               <Textarea value={payNotes} onChange={(e) => setPayNotes(e.target.value)} rows={2} />
