@@ -44,6 +44,188 @@ export type Database = {
         }
         Relationships: []
       }
+      petty_cash_denominations: {
+        Row: {
+          coins: number
+          created_at: string
+          entered_by: string
+          entry_date: string
+          expected_closing: number | null
+          id: string
+          mismatch_note: string | null
+          notes_10: number
+          notes_100: number
+          notes_20: number
+          notes_200: number
+          notes_50: number
+          notes_500: number
+          total: number
+          updated_at: string
+        }
+        Insert: {
+          coins?: number
+          created_at?: string
+          entered_by: string
+          entry_date: string
+          expected_closing?: number | null
+          id?: string
+          mismatch_note?: string | null
+          notes_10?: number
+          notes_100?: number
+          notes_20?: number
+          notes_200?: number
+          notes_50?: number
+          notes_500?: number
+          total?: number
+          updated_at?: string
+        }
+        Update: {
+          coins?: number
+          created_at?: string
+          entered_by?: string
+          entry_date?: string
+          expected_closing?: number | null
+          id?: string
+          mismatch_note?: string | null
+          notes_10?: number
+          notes_100?: number
+          notes_20?: number
+          notes_200?: number
+          notes_50?: number
+          notes_500?: number
+          total?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      petty_cash_ledger: {
+        Row: {
+          amount: number
+          attachment_url: string | null
+          category: string
+          created_at: string
+          description: string | null
+          entered_by: string
+          entry_date: string
+          id: string
+          linked_request_id: string | null
+          party: string | null
+          type: Database["public"]["Enums"]["cash_flow_type"]
+          updated_at: string
+          voucher_no: string | null
+        }
+        Insert: {
+          amount: number
+          attachment_url?: string | null
+          category: string
+          created_at?: string
+          description?: string | null
+          entered_by: string
+          entry_date: string
+          id?: string
+          linked_request_id?: string | null
+          party?: string | null
+          type: Database["public"]["Enums"]["cash_flow_type"]
+          updated_at?: string
+          voucher_no?: string | null
+        }
+        Update: {
+          amount?: number
+          attachment_url?: string | null
+          category?: string
+          created_at?: string
+          description?: string | null
+          entered_by?: string
+          entry_date?: string
+          id?: string
+          linked_request_id?: string | null
+          party?: string | null
+          type?: Database["public"]["Enums"]["cash_flow_type"]
+          updated_at?: string
+          voucher_no?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "petty_cash_ledger_linked_request_id_fkey"
+            columns: ["linked_request_id"]
+            isOneToOne: false
+            referencedRelation: "petty_cash_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      petty_cash_requests: {
+        Row: {
+          amount: number
+          approval_notes: string | null
+          approved_at: string | null
+          approver_id: string | null
+          attachment_url: string | null
+          created_at: string
+          id: string
+          notes: string | null
+          paid_at: string | null
+          payer_id: string | null
+          payment_mode: string | null
+          payment_notes: string | null
+          payment_proof_url: string | null
+          payment_reference: string | null
+          purpose: string
+          rejected_reason: string | null
+          request_no: string
+          requester_id: string
+          required_date: string
+          status: Database["public"]["Enums"]["petty_cash_status"]
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          approval_notes?: string | null
+          approved_at?: string | null
+          approver_id?: string | null
+          attachment_url?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          paid_at?: string | null
+          payer_id?: string | null
+          payment_mode?: string | null
+          payment_notes?: string | null
+          payment_proof_url?: string | null
+          payment_reference?: string | null
+          purpose: string
+          rejected_reason?: string | null
+          request_no: string
+          requester_id: string
+          required_date: string
+          status?: Database["public"]["Enums"]["petty_cash_status"]
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          approval_notes?: string | null
+          approved_at?: string | null
+          approver_id?: string | null
+          attachment_url?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          paid_at?: string | null
+          payer_id?: string | null
+          payment_mode?: string | null
+          payment_notes?: string | null
+          payment_proof_url?: string | null
+          payment_reference?: string | null
+          purpose?: string
+          rejected_reason?: string | null
+          request_no?: string
+          requester_id?: string
+          required_date?: string
+          status?: Database["public"]["Enums"]["petty_cash_status"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
@@ -154,6 +336,7 @@ export type Database = {
     }
     Enums: {
       app_role: "super_admin" | "admin" | "accounts_admin" | "worker"
+      cash_flow_type: "in" | "out"
       permission_key:
         | "raise_petty_cash_request"
         | "add_petty_cash_ledger"
@@ -167,6 +350,12 @@ export type Database = {
         | "view_reports"
         | "export_reports"
         | "manage_users"
+      petty_cash_status:
+        | "submitted"
+        | "approved"
+        | "rejected"
+        | "processing"
+        | "paid"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -295,6 +484,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["super_admin", "admin", "accounts_admin", "worker"],
+      cash_flow_type: ["in", "out"],
       permission_key: [
         "raise_petty_cash_request",
         "add_petty_cash_ledger",
@@ -308,6 +498,13 @@ export const Constants = {
         "view_reports",
         "export_reports",
         "manage_users",
+      ],
+      petty_cash_status: [
+        "submitted",
+        "approved",
+        "rejected",
+        "processing",
+        "paid",
       ],
     },
   },
