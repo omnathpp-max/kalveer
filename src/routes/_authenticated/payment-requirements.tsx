@@ -42,6 +42,7 @@ import {
 } from "@/components/ui/select";
 import { toast } from "sonner";
 import { FileUpload, AttachmentViewButton } from "@/components/file-upload";
+import { useCategories } from "@/lib/use-categories";
 import {
   Receipt,
   Plus,
@@ -488,8 +489,16 @@ function NewRequestDialog({
   onSaved: () => Promise<void> | void;
 }) {
   const { user } = useAuth();
+  const categories = useCategories("payment", VENDOR_CATEGORIES);
   const [vendorName, setVendorName] = useState("");
-  const [vendorCategory, setVendorCategory] = useState(VENDOR_CATEGORIES[0]);
+  const [vendorCategory, setVendorCategory] = useState(categories[0] ?? VENDOR_CATEGORIES[0]);
+
+  useEffect(() => {
+    if (categories.length && !categories.includes(vendorCategory)) {
+      setVendorCategory(categories[0]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [categories]);
   const [paymentType, setPaymentType] = useState(PAYMENT_TYPES[0]);
   const [bankName, setBankName] = useState("");
   const [bankAccountNo, setBankAccountNo] = useState("");
@@ -508,7 +517,7 @@ function NewRequestDialog({
 
   function reset() {
     setVendorName("");
-    setVendorCategory(VENDOR_CATEGORIES[0]);
+    setVendorCategory(categories[0] ?? VENDOR_CATEGORIES[0]);
     setPaymentType(PAYMENT_TYPES[0]);
     setBankName("");
     setBankAccountNo("");
@@ -592,7 +601,7 @@ function NewRequestDialog({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {VENDOR_CATEGORIES.map((c) => (
+                  {categories.map((c) => (
                     <SelectItem key={c} value={c}>
                       {c}
                     </SelectItem>

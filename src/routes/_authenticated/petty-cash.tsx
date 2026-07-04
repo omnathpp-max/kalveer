@@ -42,6 +42,7 @@ import {
 } from "@/components/ui/select";
 import { toast } from "sonner";
 import { FileUpload, AttachmentViewButton } from "@/components/file-upload";
+import { useCategories } from "@/lib/use-categories";
 import {
   Wallet,
   Plus,
@@ -928,14 +929,21 @@ function NewLedgerDialog({
   onSaved: () => Promise<void> | void;
 }) {
   const { user } = useAuth();
+  const categories = useCategories("petty_cash", LEDGER_CATEGORIES);
   const [entryDate, setEntryDate] = useState(todayISO());
   const [type, setType] = useState<"in" | "out">("out");
   const [amount, setAmount] = useState("");
-  const [category, setCategory] = useState(LEDGER_CATEGORIES[0]);
+  const [category, setCategory] = useState(categories[0] ?? LEDGER_CATEGORIES[0]);
   const [description, setDescription] = useState("");
   const [voucherNo, setVoucherNo] = useState("");
   const [party, setParty] = useState("");
   const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (categories.length && !categories.includes(category)) {
+      setCategory(categories[0]);
+    }
+  }, [categories]);
 
   async function submit() {
     if (!user) return;
@@ -1005,7 +1013,7 @@ function NewLedgerDialog({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {LEDGER_CATEGORIES.map((c) => (
+                  {categories.map((c) => (
                     <SelectItem key={c} value={c}>
                       {c}
                     </SelectItem>
