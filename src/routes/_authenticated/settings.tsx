@@ -446,20 +446,22 @@ function CategoryRow({
               variant="ghost"
               onClick={onMoveUp}
               disabled={!canUp || busy}
-              className="h-8 w-8"
+              className="h-9 w-9"
               title="Move up"
+              aria-label="Move up"
             >
-              <ArrowUp className="h-4 w-4" />
+              <ArrowUp className="h-4 w-4" aria-hidden="true" />
             </Button>
             <Button
               size="icon"
               variant="ghost"
               onClick={onMoveDown}
               disabled={!canDown || busy}
-              className="h-8 w-8"
+              className="h-9 w-9"
               title="Move down"
+              aria-label="Move down"
             >
-              <ArrowDown className="h-4 w-4" />
+              <ArrowDown className="h-4 w-4" aria-hidden="true" />
             </Button>
             {dirty && (
               <Button
@@ -467,10 +469,11 @@ function CategoryRow({
                 variant="ghost"
                 onClick={() => onSave({ name: name.trim() })}
                 disabled={busy}
-                className="h-8 w-8 text-primary"
+                className="h-9 w-9 text-primary"
                 title="Save"
+                aria-label="Save"
               >
-                <Save className="h-4 w-4" />
+                <Save className="h-4 w-4" aria-hidden="true" />
               </Button>
             )}
             <Button
@@ -478,10 +481,11 @@ function CategoryRow({
               variant="ghost"
               onClick={onDelete}
               disabled={busy}
-              className="h-8 w-8 text-destructive"
+              className="h-9 w-9 text-destructive"
               title="Delete"
+              aria-label="Delete"
             >
-              <Trash2 className="h-4 w-4" />
+              <Trash2 className="h-4 w-4" aria-hidden="true" />
             </Button>
           </div>
         </TableCell>
