@@ -85,7 +85,6 @@ function AuthPage() {
         </div>
 
 
-        </div>
 
         <Card>
           {mode === "forgot" ? (
