@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      app_settings: {
+        Row: {
+          address: string | null
+          company_name: string
+          currency: string
+          email: string | null
+          gstin: string | null
+          id: string
+          phone: string | null
+          singleton: boolean
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          address?: string | null
+          company_name?: string
+          currency?: string
+          email?: string | null
+          gstin?: string | null
+          id?: string
+          phone?: string | null
+          singleton?: boolean
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          address?: string | null
+          company_name?: string
+          currency?: string
+          email?: string | null
+          gstin?: string | null
+          id?: string
+          phone?: string | null
+          singleton?: boolean
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       audit_logs: {
         Row: {
           action: string
@@ -41,6 +80,36 @@ export type Database = {
           id?: string
           module?: string
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      categories: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean
+          kind: Database["public"]["Enums"]["category_kind"]
+          name: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          kind: Database["public"]["Enums"]["category_kind"]
+          name: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          kind?: Database["public"]["Enums"]["category_kind"]
+          name?: string
+          sort_order?: number
+          updated_at?: string
         }
         Relationships: []
       }
@@ -668,6 +737,7 @@ export type Database = {
     Enums: {
       app_role: "super_admin" | "admin" | "accounts_admin" | "worker"
       cash_flow_type: "in" | "out"
+      category_kind: "petty_cash" | "payment"
       payment_req_status:
         | "submitted"
         | "approved"
@@ -822,6 +892,7 @@ export const Constants = {
     Enums: {
       app_role: ["super_admin", "admin", "accounts_admin", "worker"],
       cash_flow_type: ["in", "out"],
+      category_kind: ["petty_cash", "payment"],
       payment_req_status: [
         "submitted",
         "approved",
