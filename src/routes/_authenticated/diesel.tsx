@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
-import { formatDate, formatDateTime, todayISO, toCSV, downloadFile } from "@/lib/format";
+import { formatDate, todayISO, toCSV, downloadFile } from "@/lib/format";
 import { logAudit } from "@/lib/audit";
 import { StatusBadge, type Status } from "@/components/status-badge";
 import { Button } from "@/components/ui/button";
