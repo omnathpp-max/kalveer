@@ -73,8 +73,9 @@ function AuthPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-muted/30 px-4 py-8">
+    <div className="flex min-h-dvh items-center justify-center bg-muted/30 px-4 py-8">
       <div className="w-full max-w-md">
+
         <div className="mb-6 flex flex-col items-center gap-2 text-center">
           <div className="rounded-lg bg-primary p-3 text-primary-foreground">
             <Mountain className="h-6 w-6" />
