@@ -11,6 +11,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportError } from "../lib/report-error";
 import { RouteErrorBoundary } from "../components/route-boundaries";
+import { Toaster } from "../components/ui/sonner";
 
 function NotFoundComponent() {
   return (
