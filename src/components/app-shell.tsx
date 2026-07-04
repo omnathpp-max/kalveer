@@ -25,6 +25,7 @@ import {
   SheetTitle,
   SheetDescription,
 } from "@/components/ui/sheet";
+import logoAsset from "@/assets/kalveer-logo.png.asset.json";
 
 interface NavItem {
   to: string;
@@ -129,12 +130,14 @@ export function AppShell({ children }: { children: ReactNode }) {
         aria-label="Sidebar"
         className="hidden w-64 shrink-0 flex-col border-r bg-sidebar text-sidebar-foreground md:flex"
       >
-        <div className="border-b px-5 py-4">
-          <div className="text-sm font-semibold tracking-tight">
-            Kalveer Quarry
-          </div>
-          <div className="text-xs text-muted-foreground">Operations</div>
+        <div className="flex items-center justify-center border-b px-4 py-3">
+          <img
+            src={logoAsset.url}
+            alt="Kalveer Exports LLP"
+            className="h-14 w-auto"
+          />
         </div>
+
         {sidebarContent}
       </aside>
 
@@ -144,14 +147,16 @@ export function AppShell({ children }: { children: ReactNode }) {
           side="left"
           className="w-72 max-w-[85vw] bg-sidebar p-0 text-sidebar-foreground"
         >
-          <SheetHeader className="border-b px-5 py-4 text-left">
-            <SheetTitle className="text-sm font-semibold tracking-tight">
-              Kalveer Quarry
-            </SheetTitle>
-            <SheetDescription className="text-xs text-muted-foreground">
-              Operations
-            </SheetDescription>
+          <SheetHeader className="flex items-center justify-center border-b px-4 py-3">
+            <SheetTitle className="sr-only">Kalveer Exports LLP</SheetTitle>
+            <SheetDescription className="sr-only">Navigation menu</SheetDescription>
+            <img
+              src={logoAsset.url}
+              alt="Kalveer Exports LLP"
+              className="h-14 w-auto"
+            />
           </SheetHeader>
+
           {sidebarContent}
         </SheetContent>
       </Sheet>
@@ -167,9 +172,12 @@ export function AppShell({ children }: { children: ReactNode }) {
           >
             <Menu className="h-5 w-5" aria-hidden="true" />
           </button>
-          <div className="truncate text-sm font-semibold md:hidden">
-            Kalveer Quarry
-          </div>
+          <img
+            src={logoAsset.url}
+            alt="Kalveer Exports LLP"
+            className="h-8 w-auto md:hidden"
+          />
+
           <div className="hidden text-xs text-muted-foreground md:block">
             {new Date().toLocaleDateString("en-IN", {
               weekday: "long",

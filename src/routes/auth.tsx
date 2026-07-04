@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { Mountain } from "lucide-react";
+import logoAsset from "@/assets/kalveer-logo.png.asset.json";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
@@ -76,13 +76,15 @@ function AuthPage() {
     <div className="flex min-h-dvh items-center justify-center bg-muted/30 px-4 py-8">
       <div className="w-full max-w-md">
 
-        <div className="mb-6 flex flex-col items-center gap-2 text-center">
-          <div className="rounded-lg bg-primary p-3 text-primary-foreground">
-            <Mountain className="h-6 w-6" />
-          </div>
-          <h1 className="text-2xl font-semibold tracking-tight">Kalveer Exports LLP</h1>
-
+        <div className="mb-6 flex flex-col items-center gap-3 text-center">
+          <img
+            src={logoAsset.url}
+            alt="Kalveer Exports LLP"
+            className="h-32 w-auto sm:h-40"
+          />
         </div>
+
+
 
         <Card>
           {mode === "forgot" ? (
