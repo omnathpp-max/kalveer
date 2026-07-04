@@ -15,6 +15,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedUsersRouteImport } from './routes/_authenticated/users'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedReportsRouteImport } from './routes/_authenticated/reports'
+import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedPettyCashRouteImport } from './routes/_authenticated/petty-cash'
 import { Route as AuthenticatedPaymentRequirementsRouteImport } from './routes/_authenticated/payment-requirements'
 import { Route as AuthenticatedDieselRouteImport } from './routes/_authenticated/diesel'
@@ -48,6 +49,11 @@ const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
 const AuthenticatedReportsRoute = AuthenticatedReportsRouteImport.update({
   id: '/reports',
   path: '/reports',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedPettyCashRoute = AuthenticatedPettyCashRouteImport.update({
@@ -85,6 +91,7 @@ export interface FileRoutesByFullPath {
   '/diesel': typeof AuthenticatedDieselRoute
   '/payment-requirements': typeof AuthenticatedPaymentRequirementsRoute
   '/petty-cash': typeof AuthenticatedPettyCashRoute
+  '/profile': typeof AuthenticatedProfileRoute
   '/reports': typeof AuthenticatedReportsRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/users': typeof AuthenticatedUsersRoute
@@ -97,6 +104,7 @@ export interface FileRoutesByTo {
   '/diesel': typeof AuthenticatedDieselRoute
   '/payment-requirements': typeof AuthenticatedPaymentRequirementsRoute
   '/petty-cash': typeof AuthenticatedPettyCashRoute
+  '/profile': typeof AuthenticatedProfileRoute
   '/reports': typeof AuthenticatedReportsRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/users': typeof AuthenticatedUsersRoute
@@ -111,6 +119,7 @@ export interface FileRoutesById {
   '/_authenticated/diesel': typeof AuthenticatedDieselRoute
   '/_authenticated/payment-requirements': typeof AuthenticatedPaymentRequirementsRoute
   '/_authenticated/petty-cash': typeof AuthenticatedPettyCashRoute
+  '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/reports': typeof AuthenticatedReportsRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/users': typeof AuthenticatedUsersRoute
@@ -125,6 +134,7 @@ export interface FileRouteTypes {
     | '/diesel'
     | '/payment-requirements'
     | '/petty-cash'
+    | '/profile'
     | '/reports'
     | '/settings'
     | '/users'
@@ -137,6 +147,7 @@ export interface FileRouteTypes {
     | '/diesel'
     | '/payment-requirements'
     | '/petty-cash'
+    | '/profile'
     | '/reports'
     | '/settings'
     | '/users'
@@ -150,6 +161,7 @@ export interface FileRouteTypes {
     | '/_authenticated/diesel'
     | '/_authenticated/payment-requirements'
     | '/_authenticated/petty-cash'
+    | '/_authenticated/profile'
     | '/_authenticated/reports'
     | '/_authenticated/settings'
     | '/_authenticated/users'
@@ -205,6 +217,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedReportsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/profile': {
+      id: '/_authenticated/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof AuthenticatedProfileRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/petty-cash': {
       id: '/_authenticated/petty-cash'
       path: '/petty-cash'
@@ -249,6 +268,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedDieselRoute: typeof AuthenticatedDieselRoute
   AuthenticatedPaymentRequirementsRoute: typeof AuthenticatedPaymentRequirementsRoute
   AuthenticatedPettyCashRoute: typeof AuthenticatedPettyCashRoute
+  AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedReportsRoute: typeof AuthenticatedReportsRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedUsersRoute: typeof AuthenticatedUsersRoute
@@ -260,6 +280,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedDieselRoute: AuthenticatedDieselRoute,
   AuthenticatedPaymentRequirementsRoute: AuthenticatedPaymentRequirementsRoute,
   AuthenticatedPettyCashRoute: AuthenticatedPettyCashRoute,
+  AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedReportsRoute: AuthenticatedReportsRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedUsersRoute: AuthenticatedUsersRoute,
