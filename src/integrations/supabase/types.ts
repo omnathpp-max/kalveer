@@ -44,6 +44,226 @@ export type Database = {
         }
         Relationships: []
       }
+      diesel_daily_reports: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          closing_litres: number
+          consumption_litres: number
+          created_at: string
+          created_by: string | null
+          id: string
+          opening_litres: number
+          prepared_by: string | null
+          received_litres: number
+          rejection_reason: string | null
+          remarks: string | null
+          report_date: string
+          shift: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          closing_litres?: number
+          consumption_litres?: number
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          opening_litres?: number
+          prepared_by?: string | null
+          received_litres?: number
+          rejection_reason?: string | null
+          remarks?: string | null
+          report_date: string
+          shift: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          closing_litres?: number
+          consumption_litres?: number
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          opening_litres?: number
+          prepared_by?: string | null
+          received_litres?: number
+          rejection_reason?: string | null
+          remarks?: string | null
+          report_date?: string
+          shift?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      diesel_machine_entries: {
+        Row: {
+          average_lph: number | null
+          category: string
+          consumption_litres: number
+          created_at: string
+          created_by: string | null
+          daily_report_id: string
+          hour_close: number | null
+          hour_start: number | null
+          id: string
+          machine_id: string | null
+          machine_name: string
+          nature_of_work: string | null
+          operator_id: string | null
+          operator_name: string | null
+          remarks: string | null
+          service_hours: number | null
+          tank_capacity: number | null
+          tank_details: string | null
+          total_hours: number | null
+          updated_at: string
+        }
+        Insert: {
+          average_lph?: number | null
+          category: string
+          consumption_litres?: number
+          created_at?: string
+          created_by?: string | null
+          daily_report_id: string
+          hour_close?: number | null
+          hour_start?: number | null
+          id?: string
+          machine_id?: string | null
+          machine_name: string
+          nature_of_work?: string | null
+          operator_id?: string | null
+          operator_name?: string | null
+          remarks?: string | null
+          service_hours?: number | null
+          tank_capacity?: number | null
+          tank_details?: string | null
+          total_hours?: number | null
+          updated_at?: string
+        }
+        Update: {
+          average_lph?: number | null
+          category?: string
+          consumption_litres?: number
+          created_at?: string
+          created_by?: string | null
+          daily_report_id?: string
+          hour_close?: number | null
+          hour_start?: number | null
+          id?: string
+          machine_id?: string | null
+          machine_name?: string
+          nature_of_work?: string | null
+          operator_id?: string | null
+          operator_name?: string | null
+          remarks?: string | null
+          service_hours?: number | null
+          tank_capacity?: number | null
+          tank_details?: string | null
+          total_hours?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "diesel_machine_entries_daily_report_id_fkey"
+            columns: ["daily_report_id"]
+            isOneToOne: false
+            referencedRelation: "diesel_daily_reports"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "diesel_machine_entries_machine_id_fkey"
+            columns: ["machine_id"]
+            isOneToOne: false
+            referencedRelation: "machines"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "diesel_machine_entries_operator_id_fkey"
+            columns: ["operator_id"]
+            isOneToOne: false
+            referencedRelation: "operators"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      machines: {
+        Row: {
+          active: boolean
+          category: string
+          created_at: string
+          created_by: string | null
+          id: string
+          name: string
+          notes: string | null
+          service_hours_interval: number | null
+          tank_capacity: number | null
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          category: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          name: string
+          notes?: string | null
+          service_hours_interval?: number | null
+          tank_capacity?: number | null
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          service_hours_interval?: number | null
+          tank_capacity?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      operators: {
+        Row: {
+          active: boolean
+          created_at: string
+          created_by: string | null
+          id: string
+          name: string
+          notes: string | null
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          name: string
+          notes?: string | null
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       payment_requirements: {
         Row: {
           amount: number
