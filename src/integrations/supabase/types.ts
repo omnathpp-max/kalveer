@@ -44,6 +44,117 @@ export type Database = {
         }
         Relationships: []
       }
+      payment_requirements: {
+        Row: {
+          amount: number
+          approval_notes: string | null
+          approved_amount: number | null
+          approved_at: string | null
+          approver_id: string | null
+          attachment_url: string | null
+          bank_account_no: string | null
+          bank_ifsc: string | null
+          bank_name: string | null
+          created_at: string
+          id: string
+          invoice_date: string | null
+          invoice_no: string | null
+          invoice_url: string | null
+          notes: string | null
+          paid_amount: number | null
+          paid_at: string | null
+          payer_id: string | null
+          payment_mode: string | null
+          payment_notes: string | null
+          payment_proof_url: string | null
+          payment_reference: string | null
+          payment_type: string
+          priority: string
+          purpose: string
+          rejected_reason: string | null
+          request_no: string
+          requester_id: string
+          required_date: string
+          status: Database["public"]["Enums"]["payment_req_status"]
+          updated_at: string
+          upi_id: string | null
+          vendor_category: string | null
+          vendor_name: string
+        }
+        Insert: {
+          amount: number
+          approval_notes?: string | null
+          approved_amount?: number | null
+          approved_at?: string | null
+          approver_id?: string | null
+          attachment_url?: string | null
+          bank_account_no?: string | null
+          bank_ifsc?: string | null
+          bank_name?: string | null
+          created_at?: string
+          id?: string
+          invoice_date?: string | null
+          invoice_no?: string | null
+          invoice_url?: string | null
+          notes?: string | null
+          paid_amount?: number | null
+          paid_at?: string | null
+          payer_id?: string | null
+          payment_mode?: string | null
+          payment_notes?: string | null
+          payment_proof_url?: string | null
+          payment_reference?: string | null
+          payment_type: string
+          priority?: string
+          purpose: string
+          rejected_reason?: string | null
+          request_no: string
+          requester_id: string
+          required_date: string
+          status?: Database["public"]["Enums"]["payment_req_status"]
+          updated_at?: string
+          upi_id?: string | null
+          vendor_category?: string | null
+          vendor_name: string
+        }
+        Update: {
+          amount?: number
+          approval_notes?: string | null
+          approved_amount?: number | null
+          approved_at?: string | null
+          approver_id?: string | null
+          attachment_url?: string | null
+          bank_account_no?: string | null
+          bank_ifsc?: string | null
+          bank_name?: string | null
+          created_at?: string
+          id?: string
+          invoice_date?: string | null
+          invoice_no?: string | null
+          invoice_url?: string | null
+          notes?: string | null
+          paid_amount?: number | null
+          paid_at?: string | null
+          payer_id?: string | null
+          payment_mode?: string | null
+          payment_notes?: string | null
+          payment_proof_url?: string | null
+          payment_reference?: string | null
+          payment_type?: string
+          priority?: string
+          purpose?: string
+          rejected_reason?: string | null
+          request_no?: string
+          requester_id?: string
+          required_date?: string
+          status?: Database["public"]["Enums"]["payment_req_status"]
+          updated_at?: string
+          upi_id?: string | null
+          vendor_category?: string | null
+          vendor_name?: string
+        }
+        Relationships: []
+      }
       petty_cash_denominations: {
         Row: {
           coins: number
@@ -337,6 +448,12 @@ export type Database = {
     Enums: {
       app_role: "super_admin" | "admin" | "accounts_admin" | "worker"
       cash_flow_type: "in" | "out"
+      payment_req_status:
+        | "submitted"
+        | "approved"
+        | "rejected"
+        | "processing"
+        | "paid"
       permission_key:
         | "raise_petty_cash_request"
         | "add_petty_cash_ledger"
@@ -485,6 +602,13 @@ export const Constants = {
     Enums: {
       app_role: ["super_admin", "admin", "accounts_admin", "worker"],
       cash_flow_type: ["in", "out"],
+      payment_req_status: [
+        "submitted",
+        "approved",
+        "rejected",
+        "processing",
+        "paid",
+      ],
       permission_key: [
         "raise_petty_cash_request",
         "add_petty_cash_ledger",
