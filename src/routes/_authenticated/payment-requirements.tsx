@@ -57,8 +57,14 @@ import {
   Wallet,
 } from "lucide-react";
 
+import { AccessGuard } from "@/components/access-guard";
+
 export const Route = createFileRoute("/_authenticated/payment-requirements")({
-  component: PaymentRequirementsPage,
+  component: () => (
+    <AccessGuard module="payment_requirements">
+      <PaymentRequirementsPage />
+    </AccessGuard>
+  ),
 });
 
 type RequestRow = {

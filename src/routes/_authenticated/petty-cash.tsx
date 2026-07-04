@@ -55,8 +55,14 @@ import {
   Loader2,
 } from "lucide-react";
 
+import { AccessGuard } from "@/components/access-guard";
+
 export const Route = createFileRoute("/_authenticated/petty-cash")({
-  component: PettyCashPage,
+  component: () => (
+    <AccessGuard module="petty_cash">
+      <PettyCashPage />
+    </AccessGuard>
+  ),
 });
 
 type RequestRow = {
