@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { Mountain } from "lucide-react";
 
 export const Route = createFileRoute("/auth")({
+  ssr: false,
   beforeLoad: async () => {
     const { data } = await supabase.auth.getSession();
     if (data.session) throw redirect({ to: "/dashboard" });
