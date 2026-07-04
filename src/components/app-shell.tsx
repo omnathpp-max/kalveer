@@ -25,6 +25,7 @@ import {
   SheetTitle,
   SheetDescription,
 } from "@/components/ui/sheet";
+import logoAsset from "@/assets/kalveer-logo.png.asset.json";
 
 interface NavItem {
   to: string;
