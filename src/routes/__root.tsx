@@ -53,6 +53,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Kalveer Quarry Operations" },
+      { name: "description", content: "Kalveer Exports quarry operations — petty cash, payment approvals, diesel reports and audit trail." },
+      { property: "og:description", content: "Kalveer Exports quarry operations — petty cash, payment approvals, diesel reports and audit trail." },
+      { name: "twitter:description", content: "Kalveer Exports quarry operations — petty cash, payment approvals, diesel reports and audit trail." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/2f839a06-af85-43d9-867f-dae2f1f4526f/id-preview-437b4a2a--8892ddc8-a682-4802-8292-b3e034e3862f.lovable.app-1783149320329.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/2f839a06-af85-43d9-867f-dae2f1f4526f/id-preview-437b4a2a--8892ddc8-a682-4802-8292-b3e034e3862f.lovable.app-1783149320329.png" },
     ],
     links: [
       {
