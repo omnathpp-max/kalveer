@@ -39,12 +39,30 @@ function AuthPage() {
     setLoading(true);
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     setLoading(false);
-    if (error) return toast.error(error.message);
+    if (error) {
+      const msg = error.message?.toLowerCase() ?? "";
+      if (msg.includes("invalid login") || msg.includes("invalid credentials")) {
+        return toast.error("Incorrect email or password", {
+          description: "Check your credentials and try again, or reset your password.",
+        });
+      }
+      if (msg.includes("email not confirmed")) {
+        return toast.error("Email not confirmed", {
+          description: "Please confirm your email address before signing in.",
+        });
+      }
+      return toast.error("Sign in failed", { description: error.message });
+    }
     toast.success("Welcome back");
   };
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (password.length < 8) {
+      return toast.error("Password too short", {
+        description: "Use at least 8 characters.",
+      });
+    }
     setLoading(true);
     const { error } = await supabase.auth.signUp({
       email,
@@ -55,8 +73,18 @@ function AuthPage() {
       },
     });
     setLoading(false);
-    if (error) return toast.error(error.message);
-    toast.success("Account created");
+    if (error) {
+      const msg = error.message?.toLowerCase() ?? "";
+      if (msg.includes("already registered") || msg.includes("already been registered") || msg.includes("user already")) {
+        return toast.error("Account already exists", {
+          description: "This email is already registered. Try signing in instead.",
+        });
+      }
+      return toast.error("Sign up failed", { description: error.message });
+    }
+    toast.success("Account created", {
+      description: "Check your email to confirm your address if required.",
+    });
   };
 
   const handleForgot = async (e: React.FormEvent) => {
@@ -67,10 +95,11 @@ function AuthPage() {
       redirectTo: `${window.location.origin}/reset-password`,
     });
     setLoading(false);
-    if (error) return toast.error(error.message);
-    toast.success("Reset link sent — check your email");
+    if (error) return toast.error("Reset failed", { description: error.message });
+    toast.success("Reset link sent", { description: "Check your email for a link to set a new password." });
     setMode("auth");
   };
+
 
   return (
     <div className="flex min-h-dvh items-center justify-center bg-muted/30 px-4 py-8">
