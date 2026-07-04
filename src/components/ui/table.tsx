@@ -4,7 +4,16 @@ import { cn } from "@/lib/utils";
 
 const Table = React.forwardRef<HTMLTableElement, React.HTMLAttributes<HTMLTableElement>>(
   ({ className, ...props }, ref) => (
-    <div className="relative w-full overflow-x-auto">
+    <div
+      className="relative w-full overflow-x-auto [-webkit-overflow-scrolling:touch] [scrollbar-width:thin]"
+      style={{
+        // Right-edge fade hints that more columns exist off-screen.
+        maskImage:
+          "linear-gradient(to right, #000 0, #000 calc(100% - 24px), transparent 100%)",
+        WebkitMaskImage:
+          "linear-gradient(to right, #000 0, #000 calc(100% - 24px), transparent 100%)",
+      }}
+    >
       <table
         ref={ref}
         className={cn("w-full min-w-max caption-bottom text-sm", className)}
