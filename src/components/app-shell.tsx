@@ -144,9 +144,9 @@ export function AppShell({ children }: { children: ReactNode }) {
       <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
         <SheetContent
           side="left"
-          className="w-72 max-w-[85vw] bg-sidebar p-0 text-sidebar-foreground"
+          className="flex h-[100dvh] w-72 max-w-[85vw] flex-col bg-sidebar p-0 text-sidebar-foreground"
         >
-          <SheetHeader className="flex items-center justify-center border-b px-4 py-3">
+          <SheetHeader className="shrink-0 flex items-center justify-center border-b px-4 py-3">
             <SheetTitle className="sr-only">Kalveer Exports LLP</SheetTitle>
             <SheetDescription className="sr-only">Navigation menu</SheetDescription>
             <img
@@ -156,7 +156,9 @@ export function AppShell({ children }: { children: ReactNode }) {
             />
           </SheetHeader>
 
-          {sidebarContent}
+          <div className="flex-1 min-h-0 overflow-hidden pb-[env(safe-area-inset-bottom)]">
+            {sidebarContent}
+          </div>
         </SheetContent>
       </Sheet>
 
