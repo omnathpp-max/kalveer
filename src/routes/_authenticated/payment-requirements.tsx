@@ -492,6 +492,13 @@ function NewRequestDialog({
   const categories = useCategories("payment", VENDOR_CATEGORIES);
   const [vendorName, setVendorName] = useState("");
   const [vendorCategory, setVendorCategory] = useState(categories[0] ?? VENDOR_CATEGORIES[0]);
+
+  useEffect(() => {
+    if (categories.length && !categories.includes(vendorCategory)) {
+      setVendorCategory(categories[0]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [categories]);
   const [paymentType, setPaymentType] = useState(PAYMENT_TYPES[0]);
   const [bankName, setBankName] = useState("");
   const [bankAccountNo, setBankAccountNo] = useState("");
