@@ -130,12 +130,14 @@ export function AppShell({ children }: { children: ReactNode }) {
         aria-label="Sidebar"
         className="hidden w-64 shrink-0 flex-col border-r bg-sidebar text-sidebar-foreground md:flex"
       >
-        <div className="border-b px-5 py-4">
-          <div className="text-sm font-semibold tracking-tight">
-            Kalveer Quarry
-          </div>
-          <div className="text-xs text-muted-foreground">Operations</div>
+        <div className="flex items-center justify-center border-b px-4 py-3">
+          <img
+            src={logoAsset.url}
+            alt="Kalveer Exports LLP"
+            className="h-14 w-auto"
+          />
         </div>
+
         {sidebarContent}
       </aside>
 
