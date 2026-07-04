@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { formatINR, formatDate, formatDateTime, todayISO, toCSV, downloadFile } from "@/lib/format";
 import { logAudit } from "@/lib/audit";
+import { notifyRole, notifyUser } from "@/lib/notifications";
 import { StatusBadge, type Status } from "@/components/status-badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -572,6 +573,15 @@ function NewRequestDialog({
       amount: amt,
       priority,
     });
+    await notifyRole({
+      role: "accounts_admin",
+      type: "payment_req_submitted",
+      title: `${priority === "urgent" ? "URGENT · " : ""}Payment request · ${formatINR(amt)}`,
+      body: `${vendorName.trim()} — ${purpose.trim()}`,
+      module: "payment_requirements",
+      entityId: data?.id ?? undefined,
+      link: "/payment-requirements",
+    });
     toast.success(`Request ${data?.request_no} submitted`);
     reset();
     onOpenChange(false);
@@ -783,6 +793,46 @@ function RequestDetailDialog({
     setBusy(false);
     if (error) return toast.error(error.message);
     await logAudit("payment_requirements", action, request.id, patch);
+    if (action === "request_approved") {
+      await notifyUser({
+        userId: request.requester_id,
+        type: action,
+        title: `Payment ${request.request_no} approved`,
+        body: `${request.vendor_name} · ${formatINR(Number(patch.approved_amount ?? request.amount))}`,
+        module: "payment_requirements",
+        entityId: request.id,
+        link: "/payment-requirements",
+      });
+      await notifyRole({
+        role: "accounts_admin",
+        type: "payment_req_ready_to_pay",
+        title: `Ready to pay · ${request.request_no}`,
+        body: `${request.vendor_name} · ${formatINR(Number(patch.approved_amount ?? request.amount))}`,
+        module: "payment_requirements",
+        entityId: request.id,
+        link: "/payment-requirements",
+      });
+    } else if (action === "request_rejected") {
+      await notifyUser({
+        userId: request.requester_id,
+        type: action,
+        title: `Payment ${request.request_no} rejected`,
+        body: (patch.rejected_reason as string) ?? undefined,
+        module: "payment_requirements",
+        entityId: request.id,
+        link: "/payment-requirements",
+      });
+    } else if (action === "request_paid") {
+      await notifyUser({
+        userId: request.requester_id,
+        type: action,
+        title: `Paid · ${request.request_no}`,
+        body: `${request.vendor_name} · ${formatINR(Number(patch.paid_amount ?? request.amount))}`,
+        module: "payment_requirements",
+        entityId: request.id,
+        link: "/payment-requirements",
+      });
+    }
     toast.success("Request updated");
     await onChanged();
   }

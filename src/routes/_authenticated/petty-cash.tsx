@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { formatINR, formatDate, formatDateTime, todayISO, toCSV, downloadFile } from "@/lib/format";
 import { logAudit } from "@/lib/audit";
+import { notifyRole, notifyUser } from "@/lib/notifications";
 import { StatusBadge, type Status } from "@/components/status-badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -475,6 +476,15 @@ function NewRequestDialog({
     setSaving(false);
     if (error) return toast.error(error.message);
     await logAudit("petty_cash", "request_created", data?.id, { amount: amt });
+    await notifyRole({
+      role: "accounts_admin",
+      type: "petty_cash_submitted",
+      title: `New petty cash request · ${formatINR(amt)}`,
+      body: purpose.trim(),
+      module: "petty_cash",
+      entityId: data?.id ?? undefined,
+      link: "/petty-cash",
+    });
     toast.success(`Request ${data?.request_no} submitted`);
     reset();
     onOpenChange(false);
@@ -583,6 +593,47 @@ function RequestDetailDialog({
     setBusy(false);
     if (error) return toast.error(error.message);
     await logAudit("petty_cash", action, request.id, patch);
+    // Notifications on status transitions
+    if (action === "request_approved") {
+      await notifyUser({
+        userId: request.requester_id,
+        type: action,
+        title: `Your petty cash ${request.request_no} was approved`,
+        body: formatINR(request.amount),
+        module: "petty_cash",
+        entityId: request.id,
+        link: "/petty-cash",
+      });
+      await notifyRole({
+        role: "accounts_admin",
+        type: "petty_cash_ready_to_pay",
+        title: `Ready to pay · ${request.request_no}`,
+        body: `${formatINR(request.amount)} — ${request.purpose}`,
+        module: "petty_cash",
+        entityId: request.id,
+        link: "/petty-cash",
+      });
+    } else if (action === "request_rejected") {
+      await notifyUser({
+        userId: request.requester_id,
+        type: action,
+        title: `Your petty cash ${request.request_no} was rejected`,
+        body: (patch.rejected_reason as string) ?? undefined,
+        module: "petty_cash",
+        entityId: request.id,
+        link: "/petty-cash",
+      });
+    } else if (action === "request_paid") {
+      await notifyUser({
+        userId: request.requester_id,
+        type: action,
+        title: `Payment released · ${request.request_no}`,
+        body: `${formatINR(request.amount)} paid via ${patch.payment_mode ?? ""}`.trim(),
+        module: "petty_cash",
+        entityId: request.id,
+        link: "/petty-cash",
+      });
+    }
     toast.success("Request updated");
     await onChanged();
   }
