@@ -80,10 +80,8 @@ function AuthPage() {
           <div className="rounded-lg bg-primary p-3 text-primary-foreground">
             <Mountain className="h-6 w-6" />
           </div>
-          <h1 className="text-2xl font-semibold tracking-tight">Kalveer Quarry Operations</h1>
-          <p className="text-sm text-muted-foreground">
-            Petty cash · Payment requirements · Diesel
-          </p>
+          <h1 className="text-2xl font-semibold tracking-tight">Kalveer Exports LLP</h1>
+
         </div>
 
         <Card>
