@@ -27,27 +27,28 @@ import {
 } from "@/components/ui/sheet";
 import logoAsset from "@/assets/kalveer-logo.png.asset.json";
 
+import { MODULE_ACCESS, canAccess, type ModuleKey } from "@/lib/access";
+
 interface NavItem {
   to: string;
   label: string;
   icon: typeof LayoutDashboard;
-  adminOnly?: boolean;
-  superAdminOnly?: boolean;
+  module: ModuleKey;
 }
 
 const NAV: NavItem[] = [
-  { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { to: "/petty-cash", label: "Petty Cash", icon: Wallet },
-  { to: "/payment-requirements", label: "Payment Requirements", icon: Receipt },
-  { to: "/diesel", label: "Diesel", icon: Fuel },
-  { to: "/reports", label: "Reports", icon: FileBarChart },
-  { to: "/users", label: "Users & Permissions", icon: Users, superAdminOnly: true },
-  { to: "/audit-logs", label: "Audit Logs", icon: ShieldCheck, adminOnly: true },
-  { to: "/settings", label: "Settings", icon: Settings },
+  { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard, module: "dashboard" },
+  { to: "/petty-cash", label: "Petty Cash", icon: Wallet, module: "petty_cash" },
+  { to: "/payment-requirements", label: "Payment Requirements", icon: Receipt, module: "payment_requirements" },
+  { to: "/diesel", label: "Diesel", icon: Fuel, module: "diesel" },
+  { to: "/reports", label: "Reports", icon: FileBarChart, module: "reports" },
+  { to: "/users", label: "Users & Permissions", icon: Users, module: "users" },
+  { to: "/audit-logs", label: "Audit Logs", icon: ShieldCheck, module: "audit_logs" },
+  { to: "/settings", label: "Settings", icon: Settings, module: "settings" },
 ];
 
 export function AppShell({ children }: { children: ReactNode }) {
-  const { profile, roles, signOut, isAnyAdmin, hasRole } = useAuth();
+  const { profile, roles, permissions, signOut } = useAuth();
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -58,11 +59,9 @@ export function AppShell({ children }: { children: ReactNode }) {
     setMobileOpen(false);
   }, [location.pathname]);
 
-  const items = NAV.filter((item) => {
-    if (item.superAdminOnly) return hasRole("super_admin");
-    if (item.adminOnly) return isAnyAdmin;
-    return true;
-  });
+  const items = NAV.filter((item) =>
+    canAccess(MODULE_ACCESS[item.module], { roles, permissions }),
+  );
 
   const sidebarContent = (
     <div className="flex h-full min-h-0 flex-col">
