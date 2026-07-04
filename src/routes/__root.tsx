@@ -84,6 +84,29 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
+  useEffect(() => {
+    const onErr = (e: ErrorEvent) => {
+      reportError(e.error ?? e.message, {
+        title: "Unexpected error",
+        boundary: "window.onerror",
+        silent: true,
+      });
+    };
+    const onRej = (e: PromiseRejectionEvent) => {
+      reportError(e.reason, {
+        title: "Unhandled promise rejection",
+        boundary: "window.onunhandledrejection",
+        silent: true,
+      });
+    };
+    window.addEventListener("error", onErr);
+    window.addEventListener("unhandledrejection", onRej);
+    return () => {
+      window.removeEventListener("error", onErr);
+      window.removeEventListener("unhandledrejection", onRej);
+    };
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
