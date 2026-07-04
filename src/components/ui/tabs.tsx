@@ -10,16 +10,9 @@ const TabsList = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof TabsPrimitive.List>
 >(({ className, ...props }, ref) => (
   // Wrapper lets the list scroll horizontally on narrow screens instead of
-  // wrapping/breaking columns. Right-edge fade signals more tabs off-screen.
-  <div
-    className="w-full overflow-x-auto -mx-1 px-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
-    style={{
-      maskImage:
-        "linear-gradient(to right, #000 0, #000 calc(100% - 20px), transparent 100%)",
-      WebkitMaskImage:
-        "linear-gradient(to right, #000 0, #000 calc(100% - 20px), transparent 100%)",
-    }}
-  >
+  // wrapping/breaking columns.
+  <div className="w-full overflow-x-auto -mx-1 px-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+
     <TabsPrimitive.List
       ref={ref}
       className={cn(
