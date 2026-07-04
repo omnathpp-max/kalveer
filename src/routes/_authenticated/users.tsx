@@ -248,13 +248,13 @@ function ManageUserDialog({
 
   return (
     <Dialog open onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="max-w-lg">
-        <DialogHeader>
+      <DialogContent className="flex max-h-[90dvh] w-[calc(100vw-2rem)] max-w-lg flex-col gap-0 p-0 sm:w-full">
+        <DialogHeader className="shrink-0 border-b px-6 py-4">
           <DialogTitle>Manage {user.full_name || "user"}</DialogTitle>
           <DialogDescription>{user.email}</DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-5">
+        <div className="min-h-0 flex-1 space-y-5 overflow-y-auto px-6 py-4">
           <div className="space-y-2">
             <label className="text-sm font-medium">Role</label>
             <Select value={role} onValueChange={(v) => setRole(v as AppRole)}>
@@ -271,8 +271,8 @@ function ManageUserDialog({
             </Select>
           </div>
 
-          <div className="flex items-center justify-between rounded-md border p-3">
-            <div>
+          <div className="flex items-center justify-between gap-3 rounded-md border p-3">
+            <div className="min-w-0">
               <div className="text-sm font-medium">Account active</div>
               <div className="text-xs text-muted-foreground">
                 Inactive users cannot access the app.
@@ -287,9 +287,9 @@ function ManageUserDialog({
               {PERMISSION_KEYS.map((p, i) => (
                 <div
                   key={p}
-                  className={`flex items-center justify-between p-3 ${i > 0 ? "border-t" : ""}`}
+                  className={`flex items-center justify-between gap-3 p-3 ${i > 0 ? "border-t" : ""}`}
                 >
-                  <div className="text-sm">{PERMISSION_LABELS[p]}</div>
+                  <div className="min-w-0 text-sm">{PERMISSION_LABELS[p]}</div>
                   <Switch
                     checked={permState[p]}
                     onCheckedChange={(v) => setPermState((s) => ({ ...s, [p]: v }))}
@@ -303,7 +303,7 @@ function ManageUserDialog({
           </div>
         </div>
 
-        <DialogFooter>
+        <DialogFooter className="shrink-0 border-t bg-background px-6 py-3">
           <Button variant="outline" onClick={onClose} disabled={saving}>
             Cancel
           </Button>
@@ -313,5 +313,6 @@ function ManageUserDialog({
         </DialogFooter>
       </DialogContent>
     </Dialog>
+
   );
 }
