@@ -84,122 +84,173 @@ function DashboardPage() {
   const primaryRole = roles[0] ?? "worker";
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    let cancelled = false;
     (async () => {
-      const today = todayISO();
-      const weekAgo = new Date();
-      weekAgo.setDate(weekAgo.getDate() - 6);
-      const weekAgoISO = weekAgo.toISOString().slice(0, 10);
+      try {
+        setError(null);
+        const today = todayISO();
+        const weekAgo = new Date();
+        weekAgo.setDate(weekAgo.getDate() - 6);
+        const weekAgoISO = weekAgo.toISOString().slice(0, 10);
 
-      const [pc, pr, dieselToday, dieselWeek, paidPc, paidPr, ledger, audit] =
-        await Promise.all([
-          supabase
-            .from("petty_cash_requests")
-            .select("amount,status")
-            .in("status", ["submitted", "approved", "processing"]),
-          supabase
-            .from("payment_requirements")
-            .select("amount,approved_amount,status,priority,required_date"),
-          supabase
-            .from("diesel_daily_reports")
-            .select("consumption_litres,status")
-            .eq("report_date", today),
-          supabase
-            .from("diesel_daily_reports")
-            .select("report_date,consumption_litres")
-            .gte("report_date", weekAgoISO)
-            .order("report_date", { ascending: true }),
-          supabase
-            .from("petty_cash_requests")
-            .select("amount,paid_at")
-            .eq("status", "paid")
-            .gte("paid_at", today),
-          supabase
-            .from("payment_requirements")
-            .select("paid_amount,approved_amount,paid_at")
-            .eq("status", "paid")
-            .gte("paid_at", today),
-          supabase.from("petty_cash_ledger").select("type,amount"),
-          supabase
-            .from("audit_logs")
-            .select("id,module,action,created_at")
-            .order("created_at", { ascending: false })
-            .limit(8),
-        ]);
+        const [pc, pr, dieselToday, dieselWeek, paidPc, paidPr, ledger, audit] =
+          await Promise.all([
+            supabase
+              .from("petty_cash_requests")
+              .select("amount,status")
+              .in("status", ["submitted", "approved", "processing"]),
+            supabase
+              .from("payment_requirements")
+              .select("amount,approved_amount,status,priority,required_date"),
+            supabase
+              .from("diesel_daily_reports")
+              .select("consumption_litres,status")
+              .eq("report_date", today),
+            supabase
+              .from("diesel_daily_reports")
+              .select("report_date,consumption_litres")
+              .gte("report_date", weekAgoISO)
+              .order("report_date", { ascending: true }),
+            supabase
+              .from("petty_cash_requests")
+              .select("amount,paid_at")
+              .eq("status", "paid")
+              .gte("paid_at", today),
+            supabase
+              .from("payment_requirements")
+              .select("paid_amount,approved_amount,paid_at")
+              .eq("status", "paid")
+              .gte("paid_at", today),
+            supabase.from("petty_cash_ledger").select("type,amount"),
+            supabase
+              .from("audit_logs")
+              .select("id,module,action,created_at")
+              .order("created_at", { ascending: false })
+              .limit(8),
+          ]);
 
-      const pcRows = (pc.data ?? []) as { amount: number }[];
-      const prRows = (pr.data ?? []) as {
-        amount: number;
-        approved_amount: number | null;
-        status: string;
-        priority: string;
-      }[];
-      const prPending = prRows.filter((r) =>
-        ["submitted", "approved", "processing"].includes(r.status),
-      );
+        const firstErr =
+          pc.error ||
+          pr.error ||
+          dieselToday.error ||
+          dieselWeek.error ||
+          paidPc.error ||
+          paidPr.error ||
+          ledger.error ||
+          audit.error;
+        if (firstErr) throw firstErr;
 
-      const dieselTodayRows = (dieselToday.data ?? []) as {
-        consumption_litres: number;
-        status: string;
-      }[];
+        const pcRows = (pc.data ?? []) as { amount: number }[];
+        const prRows = (pr.data ?? []) as {
+          amount: number;
+          approved_amount: number | null;
+          status: string;
+          priority: string;
+        }[];
+        const prPending = prRows.filter((r) =>
+          ["submitted", "approved", "processing"].includes(r.status),
+        );
 
-      const dieselMap = new Map<string, number>();
-      for (const r of (dieselWeek.data ?? []) as {
-        report_date: string;
-        consumption_litres: number;
-      }[]) {
-        dieselMap.set(r.report_date, (dieselMap.get(r.report_date) ?? 0) + Number(r.consumption_litres));
-      }
-      const weekly: Array<{ day: string; consumption: number }> = [];
-      for (let i = 6; i >= 0; i--) {
-        const d = new Date();
-        d.setDate(d.getDate() - i);
-        const iso = d.toISOString().slice(0, 10);
-        weekly.push({
-          day: d.toLocaleDateString("en-IN", { weekday: "short" }),
-          consumption: Math.round((dieselMap.get(iso) ?? 0) * 10) / 10,
+        const dieselTodayRows = (dieselToday.data ?? []) as {
+          consumption_litres: number;
+          status: string;
+        }[];
+
+        const dieselMap = new Map<string, number>();
+        for (const r of (dieselWeek.data ?? []) as {
+          report_date: string;
+          consumption_litres: number;
+        }[]) {
+          dieselMap.set(
+            r.report_date,
+            (dieselMap.get(r.report_date) ?? 0) + Number(r.consumption_litres),
+          );
+        }
+        const weekly: Array<{ day: string; consumption: number }> = [];
+        for (let i = 6; i >= 0; i--) {
+          const d = new Date();
+          d.setDate(d.getDate() - i);
+          const iso = d.toISOString().slice(0, 10);
+          weekly.push({
+            day: d.toLocaleDateString("en-IN", { weekday: "short" }),
+            consumption: Math.round((dieselMap.get(iso) ?? 0) * 10) / 10,
+          });
+        }
+
+        const paidPcAmt = ((paidPc.data ?? []) as { amount: number }[]).reduce(
+          (s, r) => s + Number(r.amount),
+          0,
+        );
+        const paidPrAmt = (
+          (paidPr.data ?? []) as {
+            paid_amount: number | null;
+            approved_amount: number | null;
+          }[]
+        ).reduce((s, r) => s + Number(r.paid_amount ?? r.approved_amount ?? 0), 0);
+
+        const ledgerRows = (ledger.data ?? []) as { type: string; amount: number }[];
+        const cashIn = ledgerRows
+          .filter((r) => r.type === "in")
+          .reduce((s, r) => s + Number(r.amount), 0);
+        const cashOut = ledgerRows
+          .filter((r) => r.type === "out")
+          .reduce((s, r) => s + Number(r.amount), 0);
+
+        if (cancelled) return;
+        setStats({
+          pcPendingCount: pcRows.length,
+          pcPendingAmount: pcRows.reduce((s, r) => s + Number(r.amount), 0),
+          prPendingCount: prPending.length,
+          prPendingAmount: prPending.reduce(
+            (s, r) => s + Number(r.approved_amount ?? r.amount),
+            0,
+          ),
+          prUrgentCount: prPending.filter((r) => r.priority === "urgent").length,
+          dieselTodayLitres: dieselTodayRows.reduce(
+            (s, r) => s + Number(r.consumption_litres),
+            0,
+          ),
+          dieselTodayStatus: dieselTodayRows[0]?.status ?? null,
+          paidTodayAmount: paidPcAmt + paidPrAmt,
+          cashInHand: cashIn - cashOut,
+          recent: (audit.data ?? []) as Stats["recent"],
+          weekly,
         });
+      } catch (err) {
+        if (cancelled) return;
+        reportError(err, {
+          title: "Couldn't load dashboard",
+          boundary: "dashboard.load",
+        });
+        setError(toErrorMessage(err, "Couldn't load dashboard"));
+      } finally {
+        if (!cancelled) setLoading(false);
       }
-
-      const paidPcAmt = ((paidPc.data ?? []) as { amount: number }[]).reduce(
-        (s, r) => s + Number(r.amount),
-        0,
-      );
-      const paidPrAmt = (
-        (paidPr.data ?? []) as { paid_amount: number | null; approved_amount: number | null }[]
-      ).reduce((s, r) => s + Number(r.paid_amount ?? r.approved_amount ?? 0), 0);
-
-      const ledgerRows = (ledger.data ?? []) as { type: string; amount: number }[];
-      const cashIn = ledgerRows
-        .filter((r) => r.type === "in")
-        .reduce((s, r) => s + Number(r.amount), 0);
-      const cashOut = ledgerRows
-        .filter((r) => r.type === "out")
-        .reduce((s, r) => s + Number(r.amount), 0);
-
-      setStats({
-        pcPendingCount: pcRows.length,
-        pcPendingAmount: pcRows.reduce((s, r) => s + Number(r.amount), 0),
-        prPendingCount: prPending.length,
-        prPendingAmount: prPending.reduce(
-          (s, r) => s + Number(r.approved_amount ?? r.amount),
-          0,
-        ),
-        prUrgentCount: prPending.filter((r) => r.priority === "urgent").length,
-        dieselTodayLitres: dieselTodayRows.reduce(
-          (s, r) => s + Number(r.consumption_litres),
-          0,
-        ),
-        dieselTodayStatus: dieselTodayRows[0]?.status ?? null,
-        paidTodayAmount: paidPcAmt + paidPrAmt,
-        cashInHand: cashIn - cashOut,
-        recent: (audit.data ?? []) as Stats["recent"],
-        weekly,
-      });
-      setLoading(false);
     })();
+    return () => {
+      cancelled = true;
+    };
   }, []);
+
+  if (error && !stats) {
+    return (
+      <div className="flex min-h-[50vh] flex-col items-center justify-center gap-3 px-4 text-center">
+        <AlertTriangle className="h-8 w-8 text-amber-600" />
+        <div className="text-lg font-semibold">Couldn't load dashboard</div>
+        <p className="max-w-md text-sm text-muted-foreground break-words">{error}</p>
+        <button
+          onClick={() => window.location.reload()}
+          className="mt-2 inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+        >
+          Try again
+        </button>
+      </div>
+    );
+  }
+
 
   return (
     <div className="space-y-6">
