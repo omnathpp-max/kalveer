@@ -22,18 +22,13 @@ export const getRouter = () => {
     },
     queryCache: new QueryCache({
       onError: (error, query) => {
-        // Only toast for queries that opted in via meta.showErrorToast (default: silent).
-        // This avoids double-toasting when a component also handles the error.
         const meta = query.meta as { showErrorToast?: boolean; errorTitle?: string } | undefined;
-        if (meta?.showErrorToast !== false) {
-          reportError(error, {
-            title: meta?.errorTitle ?? "Couldn't load data",
-            boundary: `query:${String(query.queryKey?.[0] ?? "unknown")}`,
-            silent: meta?.showErrorToast === false,
-          });
-        } else {
-          console.error("[query silent]", query.queryKey, error);
-        }
+        const silent = meta?.showErrorToast === false;
+        reportError(error, {
+          title: meta?.errorTitle ?? "Couldn't load data",
+          boundary: `query:${String(query.queryKey?.[0] ?? "unknown")}`,
+          silent,
+        });
       },
     }),
     mutationCache: new MutationCache({
