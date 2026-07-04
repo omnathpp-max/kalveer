@@ -25,8 +25,14 @@ import { format } from "date-fns";
 import { toCSV, downloadFile } from "@/lib/format";
 import { Download, Search } from "lucide-react";
 
+import { AccessGuard } from "@/components/access-guard";
+
 export const Route = createFileRoute("/_authenticated/audit-logs")({
-  component: AuditLogsPage,
+  component: () => (
+    <AccessGuard module="audit_logs">
+      <AuditLogsPage />
+    </AccessGuard>
+  ),
 });
 
 interface LogRow {

@@ -27,8 +27,14 @@ import {
 } from "@/lib/permissions";
 import { Settings2 } from "lucide-react";
 
+import { AccessGuard } from "@/components/access-guard";
+
 export const Route = createFileRoute("/_authenticated/users")({
-  component: UsersPage,
+  component: () => (
+    <AccessGuard module="users">
+      <UsersPage />
+    </AccessGuard>
+  ),
 });
 
 interface UserRow {

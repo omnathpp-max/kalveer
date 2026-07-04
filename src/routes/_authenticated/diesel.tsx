@@ -68,7 +68,11 @@ import {
 } from "recharts";
 
 export const Route = createFileRoute("/_authenticated/diesel")({
-  component: DieselPage,
+  component: () => (
+    <AccessGuard module="diesel">
+      <DieselPage />
+    </AccessGuard>
+  ),
 });
 
 type Category = "excavator" | "compressor" | "vehicle" | "other";

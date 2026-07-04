@@ -17,8 +17,14 @@ import { formatINR, todayISO, toCSV, downloadFile } from "@/lib/format";
 import { useAuth } from "@/lib/auth-context";
 import { Wallet, Receipt, Fuel, Download, Printer } from "lucide-react";
 
+import { AccessGuard } from "@/components/access-guard";
+
 export const Route = createFileRoute("/_authenticated/reports")({
-  component: ReportsPage,
+  component: () => (
+    <AccessGuard module="reports">
+      <ReportsPage />
+    </AccessGuard>
+  ),
 });
 
 interface Summary {
