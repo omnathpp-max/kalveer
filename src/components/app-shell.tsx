@@ -172,9 +172,12 @@ export function AppShell({ children }: { children: ReactNode }) {
           >
             <Menu className="h-5 w-5" aria-hidden="true" />
           </button>
-          <div className="truncate text-sm font-semibold md:hidden">
-            Kalveer Quarry
-          </div>
+          <img
+            src={logoAsset.url}
+            alt="Kalveer Exports LLP"
+            className="h-8 w-auto md:hidden"
+          />
+
           <div className="hidden text-xs text-muted-foreground md:block">
             {new Date().toLocaleDateString("en-IN", {
               weekday: "long",
