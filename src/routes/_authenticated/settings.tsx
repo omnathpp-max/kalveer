@@ -21,8 +21,14 @@ import {
 import { toast } from "sonner";
 import { Loader2, Plus, Trash2, ArrowUp, ArrowDown, Save } from "lucide-react";
 
+import { AccessGuard } from "@/components/access-guard";
+
 export const Route = createFileRoute("/_authenticated/settings")({
-  component: SettingsPage,
+  component: () => (
+    <AccessGuard module="settings">
+      <SettingsPage />
+    </AccessGuard>
+  ),
 });
 
 /* -------------------------------------------------------------------------- */
