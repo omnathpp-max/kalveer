@@ -147,14 +147,16 @@ export function AppShell({ children }: { children: ReactNode }) {
           side="left"
           className="w-72 max-w-[85vw] bg-sidebar p-0 text-sidebar-foreground"
         >
-          <SheetHeader className="border-b px-5 py-4 text-left">
-            <SheetTitle className="text-sm font-semibold tracking-tight">
-              Kalveer Quarry
-            </SheetTitle>
-            <SheetDescription className="text-xs text-muted-foreground">
-              Operations
-            </SheetDescription>
+          <SheetHeader className="flex items-center justify-center border-b px-4 py-3">
+            <SheetTitle className="sr-only">Kalveer Exports LLP</SheetTitle>
+            <SheetDescription className="sr-only">Navigation menu</SheetDescription>
+            <img
+              src={logoAsset.url}
+              alt="Kalveer Exports LLP"
+              className="h-14 w-auto"
+            />
           </SheetHeader>
+
           {sidebarContent}
         </SheetContent>
       </Sheet>
