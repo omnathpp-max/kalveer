@@ -510,7 +510,7 @@ function NewRequestDialog({
 
   function reset() {
     setVendorName("");
-    setVendorCategory(VENDOR_CATEGORIES[0]);
+    setVendorCategory(categories[0] ?? VENDOR_CATEGORIES[0]);
     setPaymentType(PAYMENT_TYPES[0]);
     setBankName("");
     setBankAccountNo("");
@@ -594,7 +594,7 @@ function NewRequestDialog({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {VENDOR_CATEGORIES.map((c) => (
+                  {categories.map((c) => (
                     <SelectItem key={c} value={c}>
                       {c}
                     </SelectItem>
