@@ -14,16 +14,159 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      audit_logs: {
+        Row: {
+          action: string
+          created_at: string
+          details: Json | null
+          entity_id: string | null
+          id: string
+          module: string
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          details?: Json | null
+          entity_id?: string | null
+          id?: string
+          module: string
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          details?: Json | null
+          entity_id?: string | null
+          id?: string
+          module?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          department: string | null
+          email: string | null
+          full_name: string
+          id: string
+          is_active: boolean
+          last_login_at: string | null
+          phone: string | null
+          site: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          department?: string | null
+          email?: string | null
+          full_name?: string
+          id: string
+          is_active?: boolean
+          last_login_at?: string | null
+          phone?: string | null
+          site?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          department?: string | null
+          email?: string | null
+          full_name?: string
+          id?: string
+          is_active?: boolean
+          last_login_at?: string | null
+          phone?: string | null
+          site?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_permissions: {
+        Row: {
+          created_at: string
+          enabled: boolean
+          id: string
+          permission: Database["public"]["Enums"]["permission_key"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          permission: Database["public"]["Enums"]["permission_key"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          permission?: Database["public"]["Enums"]["permission_key"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_any_admin_role: { Args: { _user_id: string }; Returns: boolean }
+      has_permission: {
+        Args: {
+          _perm: Database["public"]["Enums"]["permission_key"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "super_admin" | "admin" | "accounts_admin" | "worker"
+      permission_key:
+        | "raise_petty_cash_request"
+        | "add_petty_cash_ledger"
+        | "approve_petty_cash"
+        | "process_petty_cash_payment"
+        | "raise_payment_requirement"
+        | "approve_payment_requirement"
+        | "process_payment_requirement"
+        | "manage_diesel_entries"
+        | "approve_diesel_report"
+        | "view_reports"
+        | "export_reports"
+        | "manage_users"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +293,22 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["super_admin", "admin", "accounts_admin", "worker"],
+      permission_key: [
+        "raise_petty_cash_request",
+        "add_petty_cash_ledger",
+        "approve_petty_cash",
+        "process_petty_cash_payment",
+        "raise_payment_requirement",
+        "approve_payment_requirement",
+        "process_payment_requirement",
+        "manage_diesel_entries",
+        "approve_diesel_report",
+        "view_reports",
+        "export_reports",
+        "manage_users",
+      ],
+    },
   },
 } as const
