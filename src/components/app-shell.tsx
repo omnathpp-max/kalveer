@@ -12,11 +12,13 @@ import {
   Menu,
   LogOut,
   X,
+  UserCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/ui/button";
 import { ROLE_LABELS } from "@/lib/permissions";
+import { NotificationBell } from "@/components/notification-bell";
 
 interface NavItem {
   to: string;
@@ -90,12 +92,19 @@ export function AppShell({ children }: { children: ReactNode }) {
       </nav>
 
       <div className="border-t p-3">
-        <div className="mb-2 px-2">
-          <div className="truncate text-sm font-medium">{profile?.full_name || "User"}</div>
-          <div className="truncate text-xs text-muted-foreground">
-            {ROLE_LABELS[primaryRole]}
+        <Link
+          to="/profile"
+          onClick={() => setMobileOpen(false)}
+          className="mb-2 flex items-center gap-2 rounded-md px-2 py-1.5 hover:bg-sidebar-accent"
+        >
+          <UserCircle className="h-8 w-8 shrink-0 text-muted-foreground" />
+          <div className="min-w-0">
+            <div className="truncate text-sm font-medium">{profile?.full_name || "User"}</div>
+            <div className="truncate text-xs text-muted-foreground">
+              {ROLE_LABELS[primaryRole]}
+            </div>
           </div>
-        </div>
+        </Link>
         <Button variant="outline" className="w-full" onClick={() => signOut()}>
           <LogOut className="mr-2 h-4 w-4" />
           Sign out
@@ -138,8 +147,14 @@ export function AppShell({ children }: { children: ReactNode }) {
               day: "numeric",
             })}
           </div>
-          <div className="text-xs text-muted-foreground">
-            {profile?.full_name}
+          <div className="ml-auto flex items-center gap-1">
+            <NotificationBell />
+            <Link
+              to="/profile"
+              className="hidden text-xs text-muted-foreground hover:text-foreground md:block"
+            >
+              {profile?.full_name}
+            </Link>
           </div>
         </header>
         <main className="flex-1 overflow-x-hidden p-4 md:p-6">{children}</main>
