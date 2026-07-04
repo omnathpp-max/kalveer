@@ -1013,7 +1013,7 @@ function NewLedgerDialog({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {LEDGER_CATEGORIES.map((c) => (
+                  {categories.map((c) => (
                     <SelectItem key={c} value={c}>
                       {c}
                     </SelectItem>

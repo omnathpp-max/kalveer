@@ -42,6 +42,7 @@ import {
 } from "@/components/ui/select";
 import { toast } from "sonner";
 import { FileUpload, AttachmentViewButton } from "@/components/file-upload";
+import { useCategories } from "@/lib/use-categories";
 import {
   Receipt,
   Plus,
@@ -488,8 +489,9 @@ function NewRequestDialog({
   onSaved: () => Promise<void> | void;
 }) {
   const { user } = useAuth();
+  const categories = useCategories("payment", VENDOR_CATEGORIES);
   const [vendorName, setVendorName] = useState("");
-  const [vendorCategory, setVendorCategory] = useState(VENDOR_CATEGORIES[0]);
+  const [vendorCategory, setVendorCategory] = useState(categories[0] ?? VENDOR_CATEGORIES[0]);
   const [paymentType, setPaymentType] = useState(PAYMENT_TYPES[0]);
   const [bankName, setBankName] = useState("");
   const [bankAccountNo, setBankAccountNo] = useState("");
