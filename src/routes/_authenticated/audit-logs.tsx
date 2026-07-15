@@ -45,7 +45,7 @@ interface LogRow {
   created_at: string;
 }
 
-const MODULES = ["all", "auth", "petty_cash", "payment_requirements", "diesel", "users"];
+const MODULES = ["all", "auth", "payment_requests", "petty_cash_wallet", "inventory", "diesel", "users", "settings"];
 
 function AuditLogsPage() {
   const { isAnyAdmin, hasPermission } = useAuth();

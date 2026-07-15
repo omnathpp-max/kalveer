@@ -2,8 +2,10 @@ import { useEffect, useState, type ReactNode } from "react";
 import { Link, useLocation } from "@tanstack/react-router";
 import {
   LayoutDashboard,
-  Wallet,
   Receipt,
+  Wallet,
+  WalletCards,
+  Package,
   Fuel,
   FileBarChart,
   Users,
@@ -38,8 +40,10 @@ interface NavItem {
 
 const NAV: NavItem[] = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard, module: "dashboard" },
-  { to: "/petty-cash", label: "Petty Cash", icon: Wallet, module: "petty_cash" },
-  { to: "/payment-requirements", label: "Payment Requirements", icon: Receipt, module: "payment_requirements" },
+  { to: "/payment-requests", label: "Payment Requests", icon: Receipt, module: "payment_requests" },
+  { to: "/my-petty-cash", label: "My Petty Cash", icon: Wallet, module: "my_petty_cash" },
+  { to: "/petty-cash-wallets", label: "All Wallets", icon: WalletCards, module: "petty_cash_wallets" },
+  { to: "/inventory", label: "Inventory", icon: Package, module: "inventory" },
   { to: "/diesel", label: "Diesel", icon: Fuel, module: "diesel" },
   { to: "/reports", label: "Reports", icon: FileBarChart, module: "reports" },
   { to: "/users", label: "Users & Permissions", icon: Users, module: "users" },

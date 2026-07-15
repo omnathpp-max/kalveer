@@ -261,6 +261,134 @@ export type Database = {
           },
         ]
       }
+      expense_heads: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean
+          name: string
+          sort_order: number
+          tracks_inventory: boolean
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          sort_order?: number
+          tracks_inventory?: boolean
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          sort_order?: number
+          tracks_inventory?: boolean
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      inventory_items: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean
+          name: string
+          notes: string | null
+          reorder_level: number
+          unit: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          notes?: string | null
+          reorder_level?: number
+          unit?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          notes?: string | null
+          reorder_level?: number
+          unit?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      inventory_movements: {
+        Row: {
+          created_at: string
+          created_by: string
+          entry_id: string | null
+          id: string
+          item_id: string
+          movement_type: Database["public"]["Enums"]["inventory_movement_type"]
+          notes: string | null
+          qty: number
+          request_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          entry_id?: string | null
+          id?: string
+          item_id: string
+          movement_type: Database["public"]["Enums"]["inventory_movement_type"]
+          notes?: string | null
+          qty: number
+          request_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          entry_id?: string | null
+          id?: string
+          item_id?: string
+          movement_type?: Database["public"]["Enums"]["inventory_movement_type"]
+          notes?: string | null
+          qty?: number
+          request_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inventory_movements_entry_id_fkey"
+            columns: ["entry_id"]
+            isOneToOne: false
+            referencedRelation: "petty_cash_wallet_entries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_movements_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "inventory_balances"
+            referencedColumns: ["item_id"]
+          },
+          {
+            foreignKeyName: "inventory_movements_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "inventory_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_movements_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "payment_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       machines: {
         Row: {
           active: boolean
@@ -375,7 +503,7 @@ export type Database = {
         }
         Relationships: []
       }
-      payment_requirements: {
+      payment_requests: {
         Row: {
           amount: number
           approval_notes: string | null
@@ -386,6 +514,7 @@ export type Database = {
           bank_account_no: string | null
           bank_ifsc: string | null
           bank_name: string | null
+          category: Database["public"]["Enums"]["payment_request_category"]
           created_at: string
           id: string
           invoice_date: string | null
@@ -399,18 +528,18 @@ export type Database = {
           payment_notes: string | null
           payment_proof_url: string | null
           payment_reference: string | null
-          payment_type: string
+          payment_type: string | null
           priority: string
           purpose: string
           rejected_reason: string | null
           request_no: string
           requester_id: string
           required_date: string
-          status: Database["public"]["Enums"]["payment_req_status"]
+          status: Database["public"]["Enums"]["payment_request_status"]
           updated_at: string
           upi_id: string | null
           vendor_category: string | null
-          vendor_name: string
+          vendor_name: string | null
         }
         Insert: {
           amount: number
@@ -422,6 +551,7 @@ export type Database = {
           bank_account_no?: string | null
           bank_ifsc?: string | null
           bank_name?: string | null
+          category: Database["public"]["Enums"]["payment_request_category"]
           created_at?: string
           id?: string
           invoice_date?: string | null
@@ -435,18 +565,18 @@ export type Database = {
           payment_notes?: string | null
           payment_proof_url?: string | null
           payment_reference?: string | null
-          payment_type: string
+          payment_type?: string | null
           priority?: string
           purpose: string
           rejected_reason?: string | null
           request_no: string
           requester_id: string
           required_date: string
-          status?: Database["public"]["Enums"]["payment_req_status"]
+          status?: Database["public"]["Enums"]["payment_request_status"]
           updated_at?: string
           upi_id?: string | null
           vendor_category?: string | null
-          vendor_name: string
+          vendor_name?: string | null
         }
         Update: {
           amount?: number
@@ -458,6 +588,7 @@ export type Database = {
           bank_account_no?: string | null
           bank_ifsc?: string | null
           bank_name?: string | null
+          category?: Database["public"]["Enums"]["payment_request_category"]
           created_at?: string
           id?: string
           invoice_date?: string | null
@@ -471,202 +602,109 @@ export type Database = {
           payment_notes?: string | null
           payment_proof_url?: string | null
           payment_reference?: string | null
-          payment_type?: string
+          payment_type?: string | null
           priority?: string
           purpose?: string
           rejected_reason?: string | null
           request_no?: string
           requester_id?: string
           required_date?: string
-          status?: Database["public"]["Enums"]["payment_req_status"]
+          status?: Database["public"]["Enums"]["payment_request_status"]
           updated_at?: string
           upi_id?: string | null
           vendor_category?: string | null
-          vendor_name?: string
+          vendor_name?: string | null
         }
         Relationships: []
       }
-      petty_cash_denominations: {
-        Row: {
-          coins: number
-          created_at: string
-          entered_by: string
-          entry_date: string
-          expected_closing: number | null
-          id: string
-          mismatch_note: string | null
-          notes_10: number
-          notes_100: number
-          notes_20: number
-          notes_200: number
-          notes_50: number
-          notes_500: number
-          total: number
-          updated_at: string
-        }
-        Insert: {
-          coins?: number
-          created_at?: string
-          entered_by: string
-          entry_date: string
-          expected_closing?: number | null
-          id?: string
-          mismatch_note?: string | null
-          notes_10?: number
-          notes_100?: number
-          notes_20?: number
-          notes_200?: number
-          notes_50?: number
-          notes_500?: number
-          total?: number
-          updated_at?: string
-        }
-        Update: {
-          coins?: number
-          created_at?: string
-          entered_by?: string
-          entry_date?: string
-          expected_closing?: number | null
-          id?: string
-          mismatch_note?: string | null
-          notes_10?: number
-          notes_100?: number
-          notes_20?: number
-          notes_200?: number
-          notes_50?: number
-          notes_500?: number
-          total?: number
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      petty_cash_ledger: {
+      petty_cash_wallet_entries: {
         Row: {
           amount: number
           attachment_url: string | null
-          category: string
           created_at: string
-          description: string | null
-          entered_by: string
+          created_by: string
+          direction: string
           entry_date: string
+          entry_type: Database["public"]["Enums"]["wallet_entry_type"]
+          expense_head_id: string | null
           id: string
-          linked_request_id: string | null
-          party: string | null
-          type: Database["public"]["Enums"]["cash_flow_type"]
+          inventory_item_id: string | null
+          is_voided: boolean
+          qty: number | null
+          remarks: string | null
+          request_id: string | null
           updated_at: string
-          voucher_no: string | null
+          user_id: string
+          vendor_or_person: string | null
         }
         Insert: {
           amount: number
           attachment_url?: string | null
-          category: string
           created_at?: string
-          description?: string | null
-          entered_by: string
-          entry_date: string
+          created_by: string
+          direction: string
+          entry_date?: string
+          entry_type: Database["public"]["Enums"]["wallet_entry_type"]
+          expense_head_id?: string | null
           id?: string
-          linked_request_id?: string | null
-          party?: string | null
-          type: Database["public"]["Enums"]["cash_flow_type"]
+          inventory_item_id?: string | null
+          is_voided?: boolean
+          qty?: number | null
+          remarks?: string | null
+          request_id?: string | null
           updated_at?: string
-          voucher_no?: string | null
+          user_id: string
+          vendor_or_person?: string | null
         }
         Update: {
           amount?: number
           attachment_url?: string | null
-          category?: string
           created_at?: string
-          description?: string | null
-          entered_by?: string
+          created_by?: string
+          direction?: string
           entry_date?: string
+          entry_type?: Database["public"]["Enums"]["wallet_entry_type"]
+          expense_head_id?: string | null
           id?: string
-          linked_request_id?: string | null
-          party?: string | null
-          type?: Database["public"]["Enums"]["cash_flow_type"]
+          inventory_item_id?: string | null
+          is_voided?: boolean
+          qty?: number | null
+          remarks?: string | null
+          request_id?: string | null
           updated_at?: string
-          voucher_no?: string | null
+          user_id?: string
+          vendor_or_person?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "petty_cash_ledger_linked_request_id_fkey"
-            columns: ["linked_request_id"]
+            foreignKeyName: "petty_cash_wallet_entries_expense_head_id_fkey"
+            columns: ["expense_head_id"]
             isOneToOne: false
-            referencedRelation: "petty_cash_requests"
+            referencedRelation: "expense_heads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "petty_cash_wallet_entries_inventory_item_id_fkey"
+            columns: ["inventory_item_id"]
+            isOneToOne: false
+            referencedRelation: "inventory_balances"
+            referencedColumns: ["item_id"]
+          },
+          {
+            foreignKeyName: "petty_cash_wallet_entries_inventory_item_id_fkey"
+            columns: ["inventory_item_id"]
+            isOneToOne: false
+            referencedRelation: "inventory_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "petty_cash_wallet_entries_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "payment_requests"
             referencedColumns: ["id"]
           },
         ]
-      }
-      petty_cash_requests: {
-        Row: {
-          amount: number
-          approval_notes: string | null
-          approved_at: string | null
-          approver_id: string | null
-          attachment_url: string | null
-          created_at: string
-          id: string
-          notes: string | null
-          paid_at: string | null
-          payer_id: string | null
-          payment_mode: string | null
-          payment_notes: string | null
-          payment_proof_url: string | null
-          payment_reference: string | null
-          purpose: string
-          rejected_reason: string | null
-          request_no: string
-          requester_id: string
-          required_date: string
-          status: Database["public"]["Enums"]["petty_cash_status"]
-          updated_at: string
-        }
-        Insert: {
-          amount: number
-          approval_notes?: string | null
-          approved_at?: string | null
-          approver_id?: string | null
-          attachment_url?: string | null
-          created_at?: string
-          id?: string
-          notes?: string | null
-          paid_at?: string | null
-          payer_id?: string | null
-          payment_mode?: string | null
-          payment_notes?: string | null
-          payment_proof_url?: string | null
-          payment_reference?: string | null
-          purpose: string
-          rejected_reason?: string | null
-          request_no: string
-          requester_id: string
-          required_date: string
-          status?: Database["public"]["Enums"]["petty_cash_status"]
-          updated_at?: string
-        }
-        Update: {
-          amount?: number
-          approval_notes?: string | null
-          approved_at?: string | null
-          approver_id?: string | null
-          attachment_url?: string | null
-          created_at?: string
-          id?: string
-          notes?: string | null
-          paid_at?: string | null
-          payer_id?: string | null
-          payment_mode?: string | null
-          payment_notes?: string | null
-          payment_proof_url?: string | null
-          payment_reference?: string | null
-          purpose?: string
-          rejected_reason?: string | null
-          request_no?: string
-          requester_id?: string
-          required_date?: string
-          status?: Database["public"]["Enums"]["petty_cash_status"]
-          updated_at?: string
-        }
-        Relationships: []
       }
       profiles: {
         Row: {
@@ -757,7 +795,27 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      inventory_balances: {
+        Row: {
+          balance: number | null
+          is_active: boolean | null
+          item_id: string | null
+          name: string | null
+          reorder_level: number | null
+          unit: string | null
+        }
+        Relationships: []
+      }
+      petty_cash_wallet_balances: {
+        Row: {
+          balance: number | null
+          email: string | null
+          full_name: string | null
+          last_activity: string | null
+          user_id: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       has_any_admin_role: { Args: { _user_id: string }; Returns: boolean }
@@ -792,7 +850,13 @@ export type Database = {
       app_role: "super_admin" | "admin" | "accounts_admin" | "worker"
       cash_flow_type: "in" | "out"
       category_kind: "petty_cash" | "payment"
-      payment_req_status:
+      inventory_movement_type: "purchase" | "consumption" | "adjustment"
+      payment_request_category:
+        | "petty_cash"
+        | "vendor_payment"
+        | "diesel"
+        | "other"
+      payment_request_status:
         | "submitted"
         | "approved"
         | "rejected"
@@ -811,12 +875,11 @@ export type Database = {
         | "view_reports"
         | "export_reports"
         | "manage_users"
-      petty_cash_status:
-        | "submitted"
-        | "approved"
-        | "rejected"
-        | "processing"
-        | "paid"
+        | "raise_request"
+        | "approve_request"
+        | "process_payment"
+        | "manage_petty_cash_wallets"
+      wallet_entry_type: "auto_top_up" | "manual_top_up" | "expense"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -947,7 +1010,14 @@ export const Constants = {
       app_role: ["super_admin", "admin", "accounts_admin", "worker"],
       cash_flow_type: ["in", "out"],
       category_kind: ["petty_cash", "payment"],
-      payment_req_status: [
+      inventory_movement_type: ["purchase", "consumption", "adjustment"],
+      payment_request_category: [
+        "petty_cash",
+        "vendor_payment",
+        "diesel",
+        "other",
+      ],
+      payment_request_status: [
         "submitted",
         "approved",
         "rejected",
@@ -967,14 +1037,12 @@ export const Constants = {
         "view_reports",
         "export_reports",
         "manage_users",
+        "raise_request",
+        "approve_request",
+        "process_payment",
+        "manage_petty_cash_wallets",
       ],
-      petty_cash_status: [
-        "submitted",
-        "approved",
-        "rejected",
-        "processing",
-        "paid",
-      ],
+      wallet_entry_type: ["auto_top_up", "manual_top_up", "expense"],
     },
   },
 } as const
