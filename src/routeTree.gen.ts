@@ -17,9 +17,14 @@ import { Route as AuthenticatedUsersRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedReportsRouteImport } from './routes/_authenticated/reports'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
+import { Route as AuthenticatedPettyCashWalletsRouteImport } from './routes/_authenticated/petty-cash-wallets'
+import { Route as AuthenticatedPaymentRequestsRouteImport } from './routes/_authenticated/payment-requests'
+import { Route as AuthenticatedMyPettyCashRouteImport } from './routes/_authenticated/my-petty-cash'
+import { Route as AuthenticatedInventoryRouteImport } from './routes/_authenticated/inventory'
 import { Route as AuthenticatedDieselRouteImport } from './routes/_authenticated/diesel'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedAuditLogsRouteImport } from './routes/_authenticated/audit-logs'
+import { Route as AuthenticatedPettyCashWalletsUserIdRouteImport } from './routes/_authenticated/petty-cash-wallets.$userId'
 
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
@@ -60,6 +65,29 @@ const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedPettyCashWalletsRoute =
+  AuthenticatedPettyCashWalletsRouteImport.update({
+    id: '/petty-cash-wallets',
+    path: '/petty-cash-wallets',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedPaymentRequestsRoute =
+  AuthenticatedPaymentRequestsRouteImport.update({
+    id: '/payment-requests',
+    path: '/payment-requests',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedMyPettyCashRoute =
+  AuthenticatedMyPettyCashRouteImport.update({
+    id: '/my-petty-cash',
+    path: '/my-petty-cash',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedInventoryRoute = AuthenticatedInventoryRouteImport.update({
+  id: '/inventory',
+  path: '/inventory',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedDieselRoute = AuthenticatedDieselRouteImport.update({
   id: '/diesel',
   path: '/diesel',
@@ -75,6 +103,12 @@ const AuthenticatedAuditLogsRoute = AuthenticatedAuditLogsRouteImport.update({
   path: '/audit-logs',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedPettyCashWalletsUserIdRoute =
+  AuthenticatedPettyCashWalletsUserIdRouteImport.update({
+    id: '/$userId',
+    path: '/$userId',
+    getParentRoute: () => AuthenticatedPettyCashWalletsRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -83,10 +117,15 @@ export interface FileRoutesByFullPath {
   '/audit-logs': typeof AuthenticatedAuditLogsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/diesel': typeof AuthenticatedDieselRoute
+  '/inventory': typeof AuthenticatedInventoryRoute
+  '/my-petty-cash': typeof AuthenticatedMyPettyCashRoute
+  '/payment-requests': typeof AuthenticatedPaymentRequestsRoute
+  '/petty-cash-wallets': typeof AuthenticatedPettyCashWalletsRouteWithChildren
   '/profile': typeof AuthenticatedProfileRoute
   '/reports': typeof AuthenticatedReportsRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/users': typeof AuthenticatedUsersRoute
+  '/petty-cash-wallets/$userId': typeof AuthenticatedPettyCashWalletsUserIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -95,10 +134,15 @@ export interface FileRoutesByTo {
   '/audit-logs': typeof AuthenticatedAuditLogsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/diesel': typeof AuthenticatedDieselRoute
+  '/inventory': typeof AuthenticatedInventoryRoute
+  '/my-petty-cash': typeof AuthenticatedMyPettyCashRoute
+  '/payment-requests': typeof AuthenticatedPaymentRequestsRoute
+  '/petty-cash-wallets': typeof AuthenticatedPettyCashWalletsRouteWithChildren
   '/profile': typeof AuthenticatedProfileRoute
   '/reports': typeof AuthenticatedReportsRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/users': typeof AuthenticatedUsersRoute
+  '/petty-cash-wallets/$userId': typeof AuthenticatedPettyCashWalletsUserIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -109,10 +153,15 @@ export interface FileRoutesById {
   '/_authenticated/audit-logs': typeof AuthenticatedAuditLogsRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/diesel': typeof AuthenticatedDieselRoute
+  '/_authenticated/inventory': typeof AuthenticatedInventoryRoute
+  '/_authenticated/my-petty-cash': typeof AuthenticatedMyPettyCashRoute
+  '/_authenticated/payment-requests': typeof AuthenticatedPaymentRequestsRoute
+  '/_authenticated/petty-cash-wallets': typeof AuthenticatedPettyCashWalletsRouteWithChildren
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/reports': typeof AuthenticatedReportsRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/users': typeof AuthenticatedUsersRoute
+  '/_authenticated/petty-cash-wallets/$userId': typeof AuthenticatedPettyCashWalletsUserIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -123,10 +172,15 @@ export interface FileRouteTypes {
     | '/audit-logs'
     | '/dashboard'
     | '/diesel'
+    | '/inventory'
+    | '/my-petty-cash'
+    | '/payment-requests'
+    | '/petty-cash-wallets'
     | '/profile'
     | '/reports'
     | '/settings'
     | '/users'
+    | '/petty-cash-wallets/$userId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -135,10 +189,15 @@ export interface FileRouteTypes {
     | '/audit-logs'
     | '/dashboard'
     | '/diesel'
+    | '/inventory'
+    | '/my-petty-cash'
+    | '/payment-requests'
+    | '/petty-cash-wallets'
     | '/profile'
     | '/reports'
     | '/settings'
     | '/users'
+    | '/petty-cash-wallets/$userId'
   id:
     | '__root__'
     | '/'
@@ -148,10 +207,15 @@ export interface FileRouteTypes {
     | '/_authenticated/audit-logs'
     | '/_authenticated/dashboard'
     | '/_authenticated/diesel'
+    | '/_authenticated/inventory'
+    | '/_authenticated/my-petty-cash'
+    | '/_authenticated/payment-requests'
+    | '/_authenticated/petty-cash-wallets'
     | '/_authenticated/profile'
     | '/_authenticated/reports'
     | '/_authenticated/settings'
     | '/_authenticated/users'
+    | '/_authenticated/petty-cash-wallets/$userId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -219,6 +283,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProfileRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/petty-cash-wallets': {
+      id: '/_authenticated/petty-cash-wallets'
+      path: '/petty-cash-wallets'
+      fullPath: '/petty-cash-wallets'
+      preLoaderRoute: typeof AuthenticatedPettyCashWalletsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/payment-requests': {
+      id: '/_authenticated/payment-requests'
+      path: '/payment-requests'
+      fullPath: '/payment-requests'
+      preLoaderRoute: typeof AuthenticatedPaymentRequestsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/my-petty-cash': {
+      id: '/_authenticated/my-petty-cash'
+      path: '/my-petty-cash'
+      fullPath: '/my-petty-cash'
+      preLoaderRoute: typeof AuthenticatedMyPettyCashRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/inventory': {
+      id: '/_authenticated/inventory'
+      path: '/inventory'
+      fullPath: '/inventory'
+      preLoaderRoute: typeof AuthenticatedInventoryRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/diesel': {
       id: '/_authenticated/diesel'
       path: '/diesel'
@@ -240,13 +332,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAuditLogsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/petty-cash-wallets/$userId': {
+      id: '/_authenticated/petty-cash-wallets/$userId'
+      path: '/$userId'
+      fullPath: '/petty-cash-wallets/$userId'
+      preLoaderRoute: typeof AuthenticatedPettyCashWalletsUserIdRouteImport
+      parentRoute: typeof AuthenticatedPettyCashWalletsRoute
+    }
   }
 }
+
+interface AuthenticatedPettyCashWalletsRouteChildren {
+  AuthenticatedPettyCashWalletsUserIdRoute: typeof AuthenticatedPettyCashWalletsUserIdRoute
+}
+
+const AuthenticatedPettyCashWalletsRouteChildren: AuthenticatedPettyCashWalletsRouteChildren =
+  {
+    AuthenticatedPettyCashWalletsUserIdRoute:
+      AuthenticatedPettyCashWalletsUserIdRoute,
+  }
+
+const AuthenticatedPettyCashWalletsRouteWithChildren =
+  AuthenticatedPettyCashWalletsRoute._addFileChildren(
+    AuthenticatedPettyCashWalletsRouteChildren,
+  )
 
 interface AuthenticatedRouteChildren {
   AuthenticatedAuditLogsRoute: typeof AuthenticatedAuditLogsRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedDieselRoute: typeof AuthenticatedDieselRoute
+  AuthenticatedInventoryRoute: typeof AuthenticatedInventoryRoute
+  AuthenticatedMyPettyCashRoute: typeof AuthenticatedMyPettyCashRoute
+  AuthenticatedPaymentRequestsRoute: typeof AuthenticatedPaymentRequestsRoute
+  AuthenticatedPettyCashWalletsRoute: typeof AuthenticatedPettyCashWalletsRouteWithChildren
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedReportsRoute: typeof AuthenticatedReportsRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
@@ -257,6 +375,11 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAuditLogsRoute: AuthenticatedAuditLogsRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedDieselRoute: AuthenticatedDieselRoute,
+  AuthenticatedInventoryRoute: AuthenticatedInventoryRoute,
+  AuthenticatedMyPettyCashRoute: AuthenticatedMyPettyCashRoute,
+  AuthenticatedPaymentRequestsRoute: AuthenticatedPaymentRequestsRoute,
+  AuthenticatedPettyCashWalletsRoute:
+    AuthenticatedPettyCashWalletsRouteWithChildren,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedReportsRoute: AuthenticatedReportsRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
