@@ -7,7 +7,7 @@ import { useAuth } from "@/lib/auth-context";
 import { ROLE_LABELS } from "@/lib/permissions";
 import { supabase } from "@/integrations/supabase/client";
 import { formatINR, formatDate, todayISO } from "@/lib/format";
-import { Wallet, Receipt, Fuel, ClipboardCheck, ArrowUpRight, AlertTriangle } from "lucide-react";
+import { Wallet, Receipt, Fuel, ClipboardCheck, ArrowUpRight, AlertTriangle, Package } from "lucide-react";
 import {
   ResponsiveContainer,
   BarChart,
@@ -23,15 +23,14 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
 });
 
 interface Stats {
-  pcPendingCount: number;
-  pcPendingAmount: number;
-  prPendingCount: number;
-  prPendingAmount: number;
-  prUrgentCount: number;
+  pendingCount: number;
+  pendingAmount: number;
+  urgentCount: number;
   dieselTodayLitres: number;
   dieselTodayStatus: string | null;
   paidTodayAmount: number;
-  cashInHand: number;
+  myWalletBalance: number;
+  lowStockCount: number;
   recent: Array<{
     id: string;
     module: string;
@@ -81,7 +80,7 @@ function StatCard({
 }
 
 function DashboardPage() {
-  const { profile, roles } = useAuth();
+  const { profile, roles, user } = useAuth();
   const primaryRole = roles[0] ?? "worker";
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
@@ -97,15 +96,12 @@ function DashboardPage() {
         weekAgo.setDate(weekAgo.getDate() - 6);
         const weekAgoISO = weekAgo.toISOString().slice(0, 10);
 
-        const [pc, pr, dieselToday, dieselWeek, paidPc, paidPr, ledger, audit] =
+        const [pending, dieselToday, dieselWeek, paidToday, myWallet, lowStock, audit] =
           await Promise.all([
             supabase
-              .from("petty_cash_requests")
-              .select("amount,status")
+              .from("payment_requests")
+              .select("amount,approved_amount,priority,status")
               .in("status", ["submitted", "approved", "processing"]),
-            supabase
-              .from("payment_requirements")
-              .select("amount,approved_amount,status,priority,required_date"),
             supabase
               .from("diesel_daily_reports")
               .select("consumption_litres,status")
@@ -116,16 +112,20 @@ function DashboardPage() {
               .gte("report_date", weekAgoISO)
               .order("report_date", { ascending: true }),
             supabase
-              .from("petty_cash_requests")
-              .select("amount,paid_at")
+              .from("payment_requests")
+              .select("paid_amount,approved_amount,amount")
               .eq("status", "paid")
               .gte("paid_at", today),
+            user
+              ? supabase
+                  .from("petty_cash_wallet_balances")
+                  .select("balance")
+                  .eq("user_id", user.id)
+                  .maybeSingle()
+              : Promise.resolve({ data: null, error: null }),
             supabase
-              .from("payment_requirements")
-              .select("paid_amount,approved_amount,paid_at")
-              .eq("status", "paid")
-              .gte("paid_at", today),
-            supabase.from("petty_cash_ledger").select("type,amount"),
+              .from("inventory_balances")
+              .select("balance,reorder_level,is_active"),
             supabase
               .from("audit_logs")
               .select("id,module,action,created_at")
@@ -134,37 +134,31 @@ function DashboardPage() {
           ]);
 
         const firstErr =
-          pc.error ||
-          pr.error ||
+          pending.error ||
           dieselToday.error ||
           dieselWeek.error ||
-          paidPc.error ||
-          paidPr.error ||
-          ledger.error ||
+          paidToday.error ||
+          lowStock.error ||
           audit.error;
         if (firstErr) throw firstErr;
 
-        const pcRows = (pc.data ?? []) as { amount: number }[];
-        const prRows = (pr.data ?? []) as {
+        const pendingRows = (pending.data ?? []) as Array<{
           amount: number;
           approved_amount: number | null;
-          status: string;
           priority: string;
-        }[];
-        const prPending = prRows.filter((r) =>
-          ["submitted", "approved", "processing"].includes(r.status),
-        );
+          status: string;
+        }>;
 
-        const dieselTodayRows = (dieselToday.data ?? []) as {
+        const dieselTodayRows = (dieselToday.data ?? []) as Array<{
           consumption_litres: number;
           status: string;
-        }[];
+        }>;
 
         const dieselMap = new Map<string, number>();
-        for (const r of (dieselWeek.data ?? []) as {
+        for (const r of (dieselWeek.data ?? []) as Array<{
           report_date: string;
           consumption_litres: number;
-        }[]) {
+        }>) {
           dieselMap.set(
             r.report_date,
             (dieselMap.get(r.report_date) ?? 0) + Number(r.consumption_litres),
@@ -181,42 +175,45 @@ function DashboardPage() {
           });
         }
 
-        const paidPcAmt = ((paidPc.data ?? []) as { amount: number }[]).reduce(
-          (s, r) => s + Number(r.amount),
+        const paidRows = (paidToday.data ?? []) as Array<{
+          paid_amount: number | null;
+          approved_amount: number | null;
+          amount: number;
+        }>;
+        const paidAmt = paidRows.reduce(
+          (s, r) => s + Number(r.paid_amount ?? r.approved_amount ?? r.amount ?? 0),
           0,
         );
-        const paidPrAmt = (
-          (paidPr.data ?? []) as {
-            paid_amount: number | null;
-            approved_amount: number | null;
-          }[]
-        ).reduce((s, r) => s + Number(r.paid_amount ?? r.approved_amount ?? 0), 0);
 
-        const ledgerRows = (ledger.data ?? []) as { type: string; amount: number }[];
-        const cashIn = ledgerRows
-          .filter((r) => r.type === "in")
-          .reduce((s, r) => s + Number(r.amount), 0);
-        const cashOut = ledgerRows
-          .filter((r) => r.type === "out")
-          .reduce((s, r) => s + Number(r.amount), 0);
+        const walletBal = Number(
+          (myWallet.data as { balance?: number } | null)?.balance ?? 0,
+        );
+
+        const stockRows = (lowStock.data ?? []) as Array<{
+          balance: number;
+          reorder_level: number;
+          is_active: boolean;
+        }>;
+        const lowStockCount = stockRows.filter(
+          (r) => r.is_active && Number(r.reorder_level) > 0 && Number(r.balance) <= Number(r.reorder_level),
+        ).length;
 
         if (cancelled) return;
         setStats({
-          pcPendingCount: pcRows.length,
-          pcPendingAmount: pcRows.reduce((s, r) => s + Number(r.amount), 0),
-          prPendingCount: prPending.length,
-          prPendingAmount: prPending.reduce(
+          pendingCount: pendingRows.length,
+          pendingAmount: pendingRows.reduce(
             (s, r) => s + Number(r.approved_amount ?? r.amount),
             0,
           ),
-          prUrgentCount: prPending.filter((r) => r.priority === "urgent").length,
+          urgentCount: pendingRows.filter((r) => r.priority === "urgent").length,
           dieselTodayLitres: dieselTodayRows.reduce(
             (s, r) => s + Number(r.consumption_litres),
             0,
           ),
           dieselTodayStatus: dieselTodayRows[0]?.status ?? null,
-          paidTodayAmount: paidPcAmt + paidPrAmt,
-          cashInHand: cashIn - cashOut,
+          paidTodayAmount: paidAmt,
+          myWalletBalance: walletBal,
+          lowStockCount,
           recent: (audit.data ?? []) as Stats["recent"],
           weekly,
         });
@@ -234,7 +231,7 @@ function DashboardPage() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [user]);
 
   if (error && !stats) {
     return (
@@ -252,7 +249,6 @@ function DashboardPage() {
     );
   }
 
-
   return (
     <div className="space-y-6">
       <div>
@@ -267,28 +263,28 @@ function DashboardPage() {
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
-          title="Pending petty cash"
-          value={loading ? "…" : String(stats?.pcPendingCount ?? 0)}
-          hint={loading ? "" : formatINR(stats?.pcPendingAmount ?? 0)}
-          icon={Wallet}
-          to="/petty-cash"
-        />
-        <StatCard
-          title="Pending payments"
-          value={loading ? "…" : String(stats?.prPendingCount ?? 0)}
+          title="Pending requests"
+          value={loading ? "…" : String(stats?.pendingCount ?? 0)}
           hint={
             loading
               ? ""
-              : `${formatINR(stats?.prPendingAmount ?? 0)}${
-                  stats?.prUrgentCount ? ` · ${stats.prUrgentCount} urgent` : ""
+              : `${formatINR(stats?.pendingAmount ?? 0)}${
+                  stats?.urgentCount ? ` · ${stats.urgentCount} urgent` : ""
                 }`
           }
           icon={Receipt}
-          to="/payment-requirements"
-          accent={stats?.prUrgentCount ? "warn" : undefined}
+          to="/payment-requests"
+          accent={stats?.urgentCount ? "warn" : undefined}
         />
         <StatCard
-          title="Diesel consumed today"
+          title="My petty cash"
+          value={loading ? "…" : formatINR(stats?.myWalletBalance ?? 0)}
+          hint="Cash on hand"
+          icon={Wallet}
+          to="/my-petty-cash"
+        />
+        <StatCard
+          title="Diesel today"
           value={loading ? "…" : `${(stats?.dieselTodayLitres ?? 0).toFixed(1)} L`}
           hint={
             loading
@@ -304,11 +300,25 @@ function DashboardPage() {
         <StatCard
           title="Paid today"
           value={loading ? "…" : formatINR(stats?.paidTodayAmount ?? 0)}
-          hint={loading ? "" : `Cash in hand: ${formatINR(stats?.cashInHand ?? 0)}`}
+          hint={loading ? "" : "Total payments settled today"}
           icon={ClipboardCheck}
           accent="ok"
         />
       </div>
+
+      {stats && stats.lowStockCount > 0 && (
+        <Card className="border-amber-500/40 bg-amber-500/5">
+          <CardContent className="flex items-center gap-3 p-4 text-sm">
+            <Package className="h-4 w-4 text-amber-600" />
+            <span>
+              {stats.lowStockCount} item{stats.lowStockCount > 1 ? "s" : ""} at or below reorder level.
+            </span>
+            <Link to="/inventory" className="ml-auto text-xs font-medium text-primary underline">
+              Review stock
+            </Link>
+          </CardContent>
+        </Card>
+      )}
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <Card className="lg:col-span-2">
@@ -375,24 +385,6 @@ function DashboardPage() {
           </CardContent>
         </Card>
       </div>
-
-      {stats && stats.prUrgentCount > 0 && (
-        <Card className="border-amber-500/40 bg-amber-500/5">
-          <CardContent className="flex items-center gap-3 p-4 text-sm">
-            <AlertTriangle className="h-4 w-4 text-amber-600" />
-            <span>
-              {stats.prUrgentCount} urgent payment{stats.prUrgentCount > 1 ? "s" : ""}{" "}
-              awaiting action.
-            </span>
-            <Link
-              to="/payment-requirements"
-              className="ml-auto text-xs font-medium text-primary underline"
-            >
-              Review now
-            </Link>
-          </CardContent>
-        </Card>
-      )}
     </div>
   );
 }

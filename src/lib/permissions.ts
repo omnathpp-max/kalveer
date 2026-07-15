@@ -1,11 +1,8 @@
 export const PERMISSION_KEYS = [
-  "raise_petty_cash_request",
-  "add_petty_cash_ledger",
-  "approve_petty_cash",
-  "process_petty_cash_payment",
-  "raise_payment_requirement",
-  "approve_payment_requirement",
-  "process_payment_requirement",
+  "raise_request",
+  "approve_request",
+  "process_payment",
+  "manage_petty_cash_wallets",
   "manage_diesel_entries",
   "approve_diesel_report",
   "view_reports",
@@ -16,13 +13,10 @@ export const PERMISSION_KEYS = [
 export type PermissionKey = (typeof PERMISSION_KEYS)[number];
 
 export const PERMISSION_LABELS: Record<PermissionKey, string> = {
-  raise_petty_cash_request: "Raise petty cash request",
-  add_petty_cash_ledger: "Add petty cash ledger entry",
-  approve_petty_cash: "Approve petty cash",
-  process_petty_cash_payment: "Process petty cash payment",
-  raise_payment_requirement: "Raise payment requirement",
-  approve_payment_requirement: "Approve payment requirement",
-  process_payment_requirement: "Process payment requirement",
+  raise_request: "Raise payment request",
+  approve_request: "Approve payment request",
+  process_payment: "Process payment",
+  manage_petty_cash_wallets: "Manage other users' petty cash wallets",
   manage_diesel_entries: "Manage diesel entries",
   approve_diesel_report: "Approve diesel report",
   view_reports: "View reports",

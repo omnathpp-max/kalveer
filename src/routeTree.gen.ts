@@ -17,8 +17,6 @@ import { Route as AuthenticatedUsersRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedReportsRouteImport } from './routes/_authenticated/reports'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
-import { Route as AuthenticatedPettyCashRouteImport } from './routes/_authenticated/petty-cash'
-import { Route as AuthenticatedPaymentRequirementsRouteImport } from './routes/_authenticated/payment-requirements'
 import { Route as AuthenticatedDieselRouteImport } from './routes/_authenticated/diesel'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedAuditLogsRouteImport } from './routes/_authenticated/audit-logs'
@@ -62,17 +60,6 @@ const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
-const AuthenticatedPettyCashRoute = AuthenticatedPettyCashRouteImport.update({
-  id: '/petty-cash',
-  path: '/petty-cash',
-  getParentRoute: () => AuthenticatedRoute,
-} as any)
-const AuthenticatedPaymentRequirementsRoute =
-  AuthenticatedPaymentRequirementsRouteImport.update({
-    id: '/payment-requirements',
-    path: '/payment-requirements',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
 const AuthenticatedDieselRoute = AuthenticatedDieselRouteImport.update({
   id: '/diesel',
   path: '/diesel',
@@ -96,8 +83,6 @@ export interface FileRoutesByFullPath {
   '/audit-logs': typeof AuthenticatedAuditLogsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/diesel': typeof AuthenticatedDieselRoute
-  '/payment-requirements': typeof AuthenticatedPaymentRequirementsRoute
-  '/petty-cash': typeof AuthenticatedPettyCashRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/reports': typeof AuthenticatedReportsRoute
   '/settings': typeof AuthenticatedSettingsRoute
@@ -110,8 +95,6 @@ export interface FileRoutesByTo {
   '/audit-logs': typeof AuthenticatedAuditLogsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/diesel': typeof AuthenticatedDieselRoute
-  '/payment-requirements': typeof AuthenticatedPaymentRequirementsRoute
-  '/petty-cash': typeof AuthenticatedPettyCashRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/reports': typeof AuthenticatedReportsRoute
   '/settings': typeof AuthenticatedSettingsRoute
@@ -126,8 +109,6 @@ export interface FileRoutesById {
   '/_authenticated/audit-logs': typeof AuthenticatedAuditLogsRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/diesel': typeof AuthenticatedDieselRoute
-  '/_authenticated/payment-requirements': typeof AuthenticatedPaymentRequirementsRoute
-  '/_authenticated/petty-cash': typeof AuthenticatedPettyCashRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/reports': typeof AuthenticatedReportsRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
@@ -142,8 +123,6 @@ export interface FileRouteTypes {
     | '/audit-logs'
     | '/dashboard'
     | '/diesel'
-    | '/payment-requirements'
-    | '/petty-cash'
     | '/profile'
     | '/reports'
     | '/settings'
@@ -156,8 +135,6 @@ export interface FileRouteTypes {
     | '/audit-logs'
     | '/dashboard'
     | '/diesel'
-    | '/payment-requirements'
-    | '/petty-cash'
     | '/profile'
     | '/reports'
     | '/settings'
@@ -171,8 +148,6 @@ export interface FileRouteTypes {
     | '/_authenticated/audit-logs'
     | '/_authenticated/dashboard'
     | '/_authenticated/diesel'
-    | '/_authenticated/payment-requirements'
-    | '/_authenticated/petty-cash'
     | '/_authenticated/profile'
     | '/_authenticated/reports'
     | '/_authenticated/settings'
@@ -244,20 +219,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProfileRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/petty-cash': {
-      id: '/_authenticated/petty-cash'
-      path: '/petty-cash'
-      fullPath: '/petty-cash'
-      preLoaderRoute: typeof AuthenticatedPettyCashRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
-    '/_authenticated/payment-requirements': {
-      id: '/_authenticated/payment-requirements'
-      path: '/payment-requirements'
-      fullPath: '/payment-requirements'
-      preLoaderRoute: typeof AuthenticatedPaymentRequirementsRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
     '/_authenticated/diesel': {
       id: '/_authenticated/diesel'
       path: '/diesel'
@@ -286,8 +247,6 @@ interface AuthenticatedRouteChildren {
   AuthenticatedAuditLogsRoute: typeof AuthenticatedAuditLogsRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedDieselRoute: typeof AuthenticatedDieselRoute
-  AuthenticatedPaymentRequirementsRoute: typeof AuthenticatedPaymentRequirementsRoute
-  AuthenticatedPettyCashRoute: typeof AuthenticatedPettyCashRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedReportsRoute: typeof AuthenticatedReportsRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
@@ -298,8 +257,6 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAuditLogsRoute: AuthenticatedAuditLogsRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedDieselRoute: AuthenticatedDieselRoute,
-  AuthenticatedPaymentRequirementsRoute: AuthenticatedPaymentRequirementsRoute,
-  AuthenticatedPettyCashRoute: AuthenticatedPettyCashRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedReportsRoute: AuthenticatedReportsRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
@@ -319,13 +276,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

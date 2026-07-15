@@ -1,38 +1,19 @@
 import type { AppRole, PermissionKey } from "@/lib/permissions";
 
-/**
- * Central access rules. A user can access a module if they:
- *  - are a super_admin (always), OR
- *  - hold one of the listed `anyRole` roles, OR
- *  - hold one of the listed `anyPermission` permissions.
- *
- * Workers get NOTHING by default beyond the dashboard/profile.
- * Anything they should access must be granted via permissions.
- */
 export interface AccessRule {
   anyRole?: AppRole[];
   anyPermission?: PermissionKey[];
 }
 
 export const MODULE_ACCESS = {
-  dashboard: {} as AccessRule, // everyone signed in
-  petty_cash: {
+  dashboard: {} as AccessRule,
+  payment_requests: {} as AccessRule, // everyone signed in can view; raise/approve/pay gated in-page
+  my_petty_cash: {} as AccessRule, // every user has their own wallet
+  petty_cash_wallets: {
     anyRole: ["admin", "accounts_admin"],
-    anyPermission: [
-      "raise_petty_cash_request",
-      "add_petty_cash_ledger",
-      "approve_petty_cash",
-      "process_petty_cash_payment",
-    ],
+    anyPermission: ["manage_petty_cash_wallets"],
   },
-  payment_requirements: {
-    anyRole: ["admin", "accounts_admin"],
-    anyPermission: [
-      "raise_payment_requirement",
-      "approve_payment_requirement",
-      "process_payment_requirement",
-    ],
-  },
+  inventory: {} as AccessRule,
   diesel: {
     anyRole: ["admin", "accounts_admin"],
     anyPermission: ["manage_diesel_entries", "approve_diesel_report"],
